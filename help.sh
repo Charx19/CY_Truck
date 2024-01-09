@@ -32,7 +32,7 @@ echo "Ce code est pour filter et afficher des données triés d'une société de
 
 }
 
-if [[$1 == '--help']]; then
+if [ "$1" == "--help" ]; then
 	help
 	exit
 fi
