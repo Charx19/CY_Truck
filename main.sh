@@ -163,14 +163,22 @@ start=$(date +%s) # Records the start time
 
 # Option -d1
 if isset "$d1"; then
+    # if (!ids[$6,$1]++) : Associative array to check if the Route ID hasn't been get already. If no, then add to the count
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest number of routes first
     # head -n 10 = Keep the top 10 drivers
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]++} END {for (driver in count) {printf "%s;%d\n", substr(driver, 1, length(driver)-1), count[driver]}}' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d1.dat"
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {
+        if (!ids[$6,$1]++) 
+            count[$6]++
+    } 
+    END {
+        for (driver in count) {
+            printf "%s;%d\n", substr(driver, 1, length(driver)-1), count[driver]
+        }
+    }' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d1.dat"
     show_elapsed_second "$start"
     gnuplot -c "progc/d.gnu" "temp/data_d1.dat" "d1" "Nb routes" "NB ROUTES" "250"
-    convert -rotate 90 "images/img_d1.png" "images/img_d1.png"
-    
+    convert -rotate 90 "images/img_d1.png" "images/img_d1.png" 
 fi
 
 # Option -d2
