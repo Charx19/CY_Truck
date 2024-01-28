@@ -1,42 +1,37 @@
 #!/usr/bin/env bash
 
-help()
-{
-echo "Ce code est pour filter et afficher des données triés d'une société de transport, en dépendant du type d'option que vous allez selectionner "
+help() {
+    echo "Ce code est pour filter et afficher des données triés d'une société de transport, en dépendant du type d'option que vous allez selectionner "
 	echo
 	echo "Syntaxe : (bash) main.sh [argument]<option>"
-	echo "Argument :"
+	echo "Arguments :"
 	echo
-	echo "--help     afficher ce texte " 
+	echo "--help: afficher ce texte " 
 	echo "Exemple : bash main.sh --help"
 	echo
-	echo "-f [file]     sélectionne le fichier data.csv(cette commandes est essencielle)"
+	echo "-f [file] sélectionne le fichier data.csv(cette commandes est essencielle)"
 	echo "Exemple : bash main.sh -f data.csv"
 	echo
-	echo "-d<1|2>     ceci créer un fichier avec la liste des conducteurs et le nombre de trajet différents qu'ils ont effectués"
-	echo " d1 , c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers 	conducteurs"                                                                                
-	echo "d2 , c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"
+	echo "-d<1|2> ceci créer un fichier avec la liste des conducteurs et le nombre de trajet différents qu'ils ont effectués"
+	echo "d1, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"                                                                                
+	echo "d2, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"
 	echo "Exemple : bash main.sh -f data.csv -d2"
-	echo "-l      créer un fichier avec les 10 plus grandes distances parcours par les conducteurs, ordonnez par numéro d'identifiant de trajet croissant"
+    echo
+	echo "-l: créer un fichier avec les 10 plus grandes distances parcours par les conducteurs, ordonnez par numéro d'identifiant de trajet croissant"
 	echo "Exemple : bash main.sh -f data.csv -l"
-	echo " -t , créer un fichier qui aura les 10 villes les plus parcours en ordre alphabétique"
+    echo
+	echo "-t: créer un fichier qui aura les 10 villes les plus parcours en ordre alphabétique"
 	echo "Exemple : bash main.sh -f data.csv -t"
-	echo " -s , on récupère les distances minimales, maximales et moyennes"
+    echo
+	echo "-s: on récupère les distances minimales, maximales et moyennes"
 	echo "Exemple : bash main.sh -f data.csv -s"
-	echo "--avl    choisir le trie avec un avl, le plus rapide"
+    echo
+	echo "--avl: choisir le trie avec un avl, le plus rapide"
 	echo "Exemple : bash main.sh -f data.csv -s --avl"
-	echo "--abr    choisir le trie avec un abr, le moins rapide"
+    echo
+	echo "--abr: choisir le trie avec un abr, le moins rapide"
 	echo "Exemple : bash main.sh -f data.csv -t --abr"	
-
 }
-#######################################
-#Check if the variable is --help
-#If it is , the message above appears
-#######################################
-if [ "$1" == "--help" ]; then
-	help
-	exit
-fi
 
 #######################################
 # Check if a variable exist
@@ -91,10 +86,14 @@ show_elapsed_second(){
 
 #######################################
 
+option_defined=false
+
 while [ $# -gt 0 ] ; 
 do
     case $1 in
-        -h)
+        --help)
+            help
+            exit
             ;;
 
         -i)
@@ -111,14 +110,17 @@ do
 
         -d1)
             d1=true
+            option_defined=true
             ;;
 
         -d2)
             d2=true
+            option_defined=true
             ;;
         
         -l)
             l=true
+            option_defined=true
             ;;
 
     esac
@@ -134,6 +136,12 @@ fi
 # Check if the input file exist
 if ! [ -f "$input" ]; then
     echo "$input doesn't exist !"
+    exit 1
+fi
+
+# Check if a option has been choosen
+if ! "$option_defined";  then
+    echo "option isn't defined !"
     exit 1
 fi
 
@@ -155,18 +163,32 @@ start=$(date +%s) # Records the start time
 
 # Option -d1
 if isset "$d1"; then
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]++} END {for (i in count) print count[i], i}' "$input" | sort -nr | head -n 10 > "temp/filtered.csv"
-    gnuplot -c "progc/d.gnu" "temp/filtered.csv" "d1" "NB ROUTES"
+    # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
+    # sort -t';' -k2 -nr = Order by biggest number of routes first
+    # head -n 10 = Keep the top 10 drivers
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]++} END {for (driver in count) {printf "%s;%d\n", substr(driver, 1, length(driver)-1), count[driver]}}' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d1.dat"
     show_elapsed_second "$start"
+    gnuplot -c "progc/d.gnu" "temp/data_d1.dat" "d1" "Nb routes" "NB ROUTES" "250"
+    convert -rotate 90 "images/img_d1.png" "images/img_d1.png"
+    
 fi
 
 # Option -d2
 if isset "$d2"; then
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]+=$5} END {for (i in count) print count[i], i}' "$input" | sort -nr | head -n 10 > "temp/filtered.csv"
-    gnuplot -c "progc/d.gnu" "temp/filtered.csv" "d2" "DISTANCE (Km)"
+    # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
+    # sort -t';' -k2 -nr = Order by biggest distance first
+    # head -n 10 = Keep the top 10 biggest distance
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]+=$5} END {for (driver in count) {printf "%s;%f\n", substr(driver, 1, length(driver)-1), count[driver]}}' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d2.dat"
     show_elapsed_second "$start"
+    gnuplot -c "progc/d.gnu" "temp/data_d2.dat" "d2" "Distance" "DISTANCE (Km)" "160000"
+    convert -rotate 90 "images/img_d2.png" "images/img_d2.png"
 fi
 
 if isset "$l"; then
+    # sort -t';' -k2 -nr = Order by biggest distance first
+    # head -n 10 = Keep the top 10 biggest distance
+    # sort -n = Order by Route ID
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$1]+=$5} END {for (i in count) {printf "%d;%f\n", i, count[i]}}' "$input" | sort -t';' -k2 -nr | head -n 10 | sort -nr > "temp/data_l.dat"
     show_elapsed_second "$start"
+    gnuplot -c "progc/l.gnu" "temp/data_l.dat"
 fi
