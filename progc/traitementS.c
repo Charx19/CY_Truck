@@ -212,8 +212,6 @@ void libererMemoire(Route* racine) {
 
 char** ligneToTab(char* l, char* type)
 {
-
-
 	char c;
 	char* s = &c;
 	char** res = &s;
