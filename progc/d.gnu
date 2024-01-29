@@ -28,4 +28,4 @@ set y2tics
 set y2range [0:ARG5] # Set Y range for the label
 set y2tic rotate by 90 center # Rotate the number from their center to fit
 
-plot ARG1 using 2:xtic(1) with histogram notitle lc rgb "#79e6af", '' using 0:2 with points notitle lc rgb "#79e6af" axes x1y2
+plot ARG1 using 2:xtic(1) with histogram notitle lc rgb "#79e6af"
