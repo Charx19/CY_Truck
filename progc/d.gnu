@@ -23,7 +23,7 @@ set y2label "NB ROUTES"
 set xtic rotate by 90 right # Rotate the names to 90 degrees from the right
 unset ytics # Remove the ytics (the tics on left side before being rotated)
 set yrange [0:ARG5] # Set Y range for the bars
-# y2tics = Values label
+# y2tics = Values label #
 set y2tics
 set y2range [0:ARG5] # Set Y range for the label
 set y2tic rotate by 90 center # Rotate the number from their center to fit
