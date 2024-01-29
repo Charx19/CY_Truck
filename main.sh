@@ -77,11 +77,17 @@ check_empty(){
     fi
 }
 
+#######################################
+# Record time
+# Arguments :
+#   The string to add for the echo
+#   The start time
+#######################################
 show_elapsed_second(){
     end=$(date +%s) # Records the end time
-    local elapsed_seconds=$(( end - $1 )) # Difference between the end and start times
+    local elapsed_seconds=$(( end - $2 )) # Difference between the end and start times
 
-    echo "Elapsed time: $elapsed_seconds seconds"
+    echo "$1$elapsed_seconds seconds"
 }
 
 #######################################
@@ -122,6 +128,14 @@ do
             l=true
             option_defined=true
             ;;
+        -t)
+            t=true
+            option_defined=true
+            ;;
+        -s)
+            s=true
+            option_defined=true
+            ;;
 
     esac
     shift
@@ -159,10 +173,9 @@ fi
 
 check_folder images
 
-start=$(date +%s) # Records the start time
-
 # Option -d1
 if isset "$d1"; then
+    start=$(date +%s) # Records the start time
     # if (!ids[$6,$1]++) : Associative array to check if the Route ID hasn't been get already. If no, then add to the count
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest number of routes first
@@ -176,27 +189,53 @@ if isset "$d1"; then
             printf "%s;%d\n", substr(driver, 1, length(driver)-1), count[driver]
         }
     }' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d1.dat"
-    show_elapsed_second "$start"
+    show_elapsed_second "Option -d1 has taken : " "$start"
     gnuplot -c "progc/d.gnu" "temp/data_d1.dat" "d1" "Nb routes" "NB ROUTES" "250"
     convert -rotate 90 "images/img_d1.png" "images/img_d1.png" 
 fi
 
 # Option -d2
 if isset "$d2"; then
+    start=$(date +%s) # Records the start time
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest distance first
     # head -n 10 = Keep the top 10 biggest distance
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$6]+=$5} END {for (driver in count) {printf "%s;%f\n", substr(driver, 1, length(driver)-1), count[driver]}}' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d2.dat"
-    show_elapsed_second "$start"
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {
+        count[$6]+=$5
+    } 
+    END {
+        for (driver in count) {
+            printf "%s;%f\n", substr(driver, 1, length(driver)-1), count[driver]
+        }
+    }' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d2.dat"
+    show_elapsed_second "Option -d2 has taken : " "$start"
     gnuplot -c "progc/d.gnu" "temp/data_d2.dat" "d2" "Distance" "DISTANCE (Km)" "160000"
     convert -rotate 90 "images/img_d2.png" "images/img_d2.png"
 fi
 
 if isset "$l"; then
+    start=$(date +%s) # Records the start time
     # sort -t';' -k2 -nr = Order by biggest distance first
     # head -n 10 = Keep the top 10 biggest distance
     # sort -n = Order by Route ID
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {count[$1]+=$5} END {for (i in count) {printf "%d;%f\n", i, count[i]}}' "$input" | sort -t';' -k2 -nr | head -n 10 | sort -nr > "temp/data_l.dat"
-    show_elapsed_second "$start"
+    awk 'BEGIN{FS=OFS=";"} NR > 1 {
+        count[$1]+=$5
+    } 
+    END {
+        for (i in count) {
+            printf "%d;%f\n", i, count[i]
+        }
+    }' "$input" | sort -t';' -k2 -nr | head -n 10 | sort -nr > "temp/data_l.dat"
+    show_elapsed_second "Option -l has taken : " "$start"
     gnuplot -c "progc/l.gnu" "temp/data_l.dat"
+fi
+
+if isset "$t"; then
+    start=$(date +%s) # Records the start time
+    show_elapsed_second "Option -t has taken : " "$start"
+fi
+
+if isset "$s"; then
+    start=$(date +%s) # Records the start time
+    show_elapsed_second "Option -s has taken : " "$start"
 fi
