@@ -233,6 +233,7 @@ fi
 if isset "$t"; then
     start=$(date +%s) # Records the start time
     show_elapsed_second "Option -t has taken : " "$start"
+    gnuplot -c "progc/s.gnu" "temp/data_s.dat"
 fi
 
 if isset "$s"; then
