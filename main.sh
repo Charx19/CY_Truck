@@ -9,28 +9,26 @@ help() {
 	echo "--help: afficher ce texte " 
 	echo "Exemple : bash main.sh --help"
 	echo
-	echo "-f [file] sélectionne le fichier data.csv(cette commandes est essencielle)"
-	echo "Exemple : bash main.sh -f data.csv"
+	echo "-i  sélectionne le fichier data.csv(cette commandes est essencielle)"
+	echo "Exemple : bash main.sh -i data.csv"
 	echo
 	echo "-d<1|2> ceci créer un fichier avec la liste des conducteurs et le nombre de trajet différents qu'ils ont effectués"
 	echo "d1, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"                                                                                
 	echo "d2, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"
-	echo "Exemple : bash main.sh -f data.csv -d2"
+	echo "Exemple : bash main.sh -i data.csv -d2"
     echo
 	echo "-l: créer un fichier avec les 10 plus grandes distances parcours par les conducteurs, ordonnez par numéro d'identifiant de trajet croissant"
-	echo "Exemple : bash main.sh -f data.csv -l"
+	echo "Exemple : bash main.sh -i data/data.csv -l"
     echo
 	echo "-t: créer un fichier qui aura les 10 villes les plus parcours en ordre alphabétique"
-	echo "Exemple : bash main.sh -f data.csv -t"
+	echo "Exemple : bash main.sh -i data/data.csv -t"
     echo
 	echo "-s: on récupère les distances minimales, maximales et moyennes"
-	echo "Exemple : bash main.sh -f data.csv -s"
+	echo "Exemple : bash main.sh -i data/data.csv -s"
     echo
 	echo "--avl: choisir le trie avec un avl, le plus rapide"
-	echo "Exemple : bash main.sh -f data.csv -s --avl"
-    echo
-	echo "--abr: choisir le trie avec un abr, le moins rapide"
-	echo "Exemple : bash main.sh -f data.csv -t --abr"	
+	echo "Exemple : bash main.sh -i data/data.csv -s --avl"
+  	
 }
 
 #######################################
