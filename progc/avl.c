@@ -2,54 +2,91 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include "avl.h"
+#include "utils.h"
 
-typedef struct AVL {
-    char name[256];
-    int totalRoutes;
-    int startRoutes;
-    struct AVL *left;
-    struct AVL *right;
-    int height;
-} AVL;
-
-typedef struct {
-    int routeID;
-    int stepID;
-    char townA[256];
-    char townB[256];
-    int distance;
-    char driverName[256];
-} DonneesCSV;
-
-typedef struct {
-    char name[256];
-    int totalRoutes;
-} VilleInfo;
-
-AVL* createAVL(char name[]) {
+AVL* createAVL(float key, void* element) {
     AVL* avl = (AVL*)malloc(sizeof(AVL));
-    strcpy(avl->name, name);
-    avl->totalRoutes = 0;
-    avl->startRoutes = 0;
+    avl->key = key;
+    avl->element = element;
     avl->left = NULL;
     avl->right = NULL;
     avl->height = 1;
     return avl;
 }
 
-int heightAVL(AVL* n) {
-    if (n == NULL)
-        return 0;
-    return n->height;
+int getHeight(AVL* node) {
+	if (node == NULL)
+		return 0;
+	return node->height;
 }
 
-int facteurEquilibre(AVL* n) {
-    if (n == NULL)
-        return 0;
-    return heightAVL(n->left) - heightAVL(n->right);
+int getBalance(AVL* node) {
+	if (node == NULL)
+		return 0;
+	return getHeight(node->left) - getHeight(node->right);
+}
+
+AVL* insertAVL(AVL* node, float key, void* element) 
+{ 
+    if (node == NULL) 
+        return(createAVL(key, element)); 
+  
+    if (key < node->key) 
+        node->left  = insertAVL(node->left, key, element); 
+    else if (key > node->key) 
+        node->right = insertAVL(node->right, key, element); 
+    else // Equal keys are not allowed in BST 
+        return node; 
+  
+    /* 2. Update height of this ancestor node */
+    node->height = 1 + max2i(getHeight(node->left), 
+                        getHeight(node->right)); 
+  
+    /* 3. Get the balance factor of this ancestor 
+          node to check whether this node became 
+          unbalanced */
+    int balance = getBalance(node); 
+  
+    // If this node becomes unbalanced, then 
+    // there are 4 cases 
+  
+    // Left Left Case 
+    if (balance > 1 && key < node->left->key) 
+        return rotateRight(node); 
+  
+    // Right Right Case 
+    if (balance < -1 && key > node->right->key) 
+        return rotateLeft(node); 
+  
+    // Left Right Case 
+    if (balance > 1 && key > node->left->key) 
+    { 
+        node->left =  rotateLeft(node->left); 
+        return rotateRight(node); 
+    } 
+  
+    // Right Left Case 
+    if (balance < -1 && key < node->right->key) 
+    { 
+        node->right = rotateRight(node->right); 
+        return rotateLeft(node); 
+    } 
+  
+    /* return the (unchanged) node pointer */
+    return node; 
+} 
+
+AVL* searchKeyAVL(AVL* node, float key) {
+    if (!node) 
+        return NULL;
+    
+    if (key < node->key)
+        return searchKeyAVL(node->left, key);
+    else if (key > node->key)
+        return searchKeyAVL(node->right, key);
+    
+    return node;
 }
 
 AVL* rotateLeft(AVL* x) {
@@ -59,8 +96,8 @@ AVL* rotateLeft(AVL* x) {
     y->left = x;
     x->right = T2;
 
-    x->height = 1 + max(heightAVL(x->left), heightAVL(x->right));
-    y->height = 1 + max(heightAVL(y->left), heightAVL(y->right));
+    x->height = 1 + max2i(getHeight(x->left), getHeight(x->right));
+    y->height = 1 + max2i(getHeight(y->left), getHeight(y->right));
 
     return y;
 }
@@ -72,53 +109,31 @@ AVL* rotateRight(AVL* y) {
     x->right = y;
     y->left = T2;
 
-    y->height = 1 + max(heightAVL(y->left), heightAVL(y->right));
-    x->height = 1 + max(heightAVL(x->left), heightAVL(x->right));
+    y->height = 1 + max2i(getHeight(y->left), getHeight(y->right));
+    x->height = 1 + max2i(getHeight(x->left), getHeight(x->right));
 
     return x;
 }
 
-AVL* insertAVL(AVL* root, char name[], int totalRoutes, int startRoutes) {
-    
-    if (root == NULL)
-        return createAVL(name);
-
-    if (strcmp(name, root->name) < 0)
-        root->left = insertAVL(root->left, name, totalRoutes, startRoutes);
-    else if (strcmp(name, root->name) > 0)
-        root->right = insertAVL(root->right, name, totalRoutes, startRoutes);
-    else 
-
-    root->height = 1 + max(heightAVL(root->left), heightAVL(root->right));
-
-    int equilibre = facteurEquilibre(root);
-
-    if (equilibre > 1 && strcmp(name, root->left->name) < 0)
-        return rotateRight(root);
-
-    if (equilibre < -1 && strcmp(name, root->right->name) > 0)
-        return rotateLeft(root);
-
-    if (equilibre > 1 && strcmp(name, root->left->name) > 0) {
-        root->left = rotateLeft(root->left);
-        return rotateRight(root);
-    }
-
-    if (equilibre < -1 && strcmp(name, root->right->name) < 0) {
-        root->right = rotateRight(root->right);
-        return rotateLeft(root);
-    }
-
-    return root;
+AVL* rotateDoubleLeft(AVL *avl) {
+    avl->right = rotateRight(avl->right);
+    return rotateLeft(avl);
 }
 
-int min (int a, int b ){
-    return (a > b) ? b : a;
+AVL* rotateDoubleRight(AVL *avl) {
+    avl->left = rotateLeft(avl->left);
+    return rotateRight(avl);
 }
 
-int max(int a, int b) {
-    return (a > b) ? a : b;
-}
+void preOrder(AVL*root) 
+{ 
+    if(root != NULL) 
+    { 
+        printf("%f ", root->key); 
+        preOrder(root->left); 
+        preOrder(root->right); 
+    } 
+} 
 
 void destroyAVL(AVL* root) {
     if (root != NULL) {
@@ -126,56 +141,4 @@ void destroyAVL(AVL* root) {
         destroyAVL(root->right);
         free(root);
     }
-}
-
-void collecteInfos(AVL* root, VilleInfo* infos, int* index) {
-    if (root != NULL) {
-        collecteInfos(root->left, infos, index);
-
-        strcpy(infos[*index].name, root->name);
-        infos[*index].totalRoutes = root->totalRoutes;
-        (*index)++;
-
-        collecteInfos(root->right, infos, index);
-    }
-}
-
-int comparaisonVilles(const void* a, const void* b) {
-    return ((VilleInfo*)b)->totalRoutes - ((VilleInfo*)a)->totalRoutes;
-}
-
-void afficherTop10Parcours(AVL* root, int* count) {
-    if (root != NULL && (*count) < 10) {
-        afficherTop10Parcours(root->right, count);
-
-        printf("%d. Ville: %s, Trajets Total: %d\n", (*count) + 1, root->name, root->totalRoutes);
-        (*count)++;
-
-        afficherTop10Parcours(root->left, count);
-    }
-}
-
-void readCSV(FILE *fichier) {   
-    printf("teste de debugage\n");
-
-    AVL *root = NULL;
-    DonneesCSV donnees;
-    while (!feof(fichier)) {
-        fscanf(fichier, "%d, %d, %s, %s, %d, %s",
-            &donnees.routeID, &donnees.stepID, donnees.townA, donnees.townB, &donnees.distance, donnees.driverName);
-
-        root = insertAVL(root, donnees.townA, donnees.routeID, 1);
-        root = insertAVL(root, donnees.townB, donnees.routeID, 0); 
-    }
-
-    if (root != NULL) {
-        VilleInfo infos[100];
-        int index = 0;
-        collecteInfos(root, infos, &index);
-        qsort(infos, index, sizeof(VilleInfo), comparaisonVilles);
-        afficherTop10(infos, index);
-        
-        printf("teste de debugage\n");
-        destroyAVL(root);
-    }    
 }
