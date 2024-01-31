@@ -17,5 +17,5 @@ set style fill solid border -1
 set xtic rotate by 45 right
 set yrange [0:3500]
 
-plot ARG1 using 2:xtic(1) title "Total routes" lc rgb "#78e5ae",\
-        ARG1 using 3 title "First Town" lc rgb "#5dca93"
+plot ARG1 using 2:xtic(1) lc rgb "#78e5ae" title "Total routes",\
+        '' using 3 lc rgb "#5dca93" title "First Town"
