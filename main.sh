@@ -158,10 +158,11 @@ if ! "$option_defined";  then
 fi
 
 # Check if C program exist
-executable_name="progc/main"
+executable_path="progc/main"
 
-if ! [ -x "$executable_name" ]; then
-    echo "The C executable '$executable_name' is either not present or not executable."
+if ! [ -x "$executable_path" ]; then
+    echo "The C executable '$executable_path' is either not present or not executable."
+    make -C "progc"
 fi
 
 # Check the existence of folders
@@ -178,9 +179,8 @@ if isset "$d1"; then
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest number of routes first
     # head -n 10 = Keep the top 10 drivers
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {
-        if (!ids[$6,$1]++) 
-            count[$6]++
+    awk -F ';' 'NR > 1 && !ids[$6,$1]++ {
+        count[$6]++
     } 
     END {
         for (driver in count) {
@@ -188,7 +188,7 @@ if isset "$d1"; then
         }
     }' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d1.dat"
     show_elapsed_second "Option -d1 has taken : " "$start"
-    gnuplot -c "progc/d.gnu" "temp/data_d1.dat" "d1" "Nb routes" "NB ROUTES" "250"
+    gnuplot -c "progc/gnuplots/d.gnu" "temp/data_d1.dat" "d1" "Nb routes" "NB ROUTES" "250"
     convert -rotate 90 "images/img_d1.png" "images/img_d1.png" 
 fi
 
@@ -198,7 +198,7 @@ if isset "$d2"; then
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest distance first
     # head -n 10 = Keep the top 10 biggest distance
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {
+    awk -F ';' 'NR > 1 {
         count[$6]+=$5
     } 
     END {
@@ -207,7 +207,7 @@ if isset "$d2"; then
         }
     }' "$input" | sort -t';' -k2 -nr | head -n 10 > "temp/data_d2.dat"
     show_elapsed_second "Option -d2 has taken : " "$start"
-    gnuplot -c "progc/d.gnu" "temp/data_d2.dat" "d2" "Distance" "DISTANCE (Km)" "160000"
+    gnuplot -c "progc/gnuplots/d.gnu" "temp/data_d2.dat" "d2" "Distance" "DISTANCE (Km)" "160000"
     convert -rotate 90 "images/img_d2.png" "images/img_d2.png"
 fi
 
@@ -216,7 +216,7 @@ if isset "$l"; then
     # sort -t';' -k2 -nr = Order by biggest distance first
     # head -n 10 = Keep the top 10 biggest distance
     # sort -n = Order by Route ID
-    awk 'BEGIN{FS=OFS=";"} NR > 1 {
+    awk -F ';' 'NR > 1 {
         count[$1]+=$5
     } 
     END {
@@ -225,16 +225,19 @@ if isset "$l"; then
         }
     }' "$input" | sort -t';' -k2 -nr | head -n 10 | sort -nr > "temp/data_l.dat"
     show_elapsed_second "Option -l has taken : " "$start"
-    gnuplot -c "progc/l.gnu" "temp/data_l.dat"
+    gnuplot -c "progc/gnuplots/l.gnu" "temp/data_l.dat"
 fi
 
 if isset "$t"; then
     start=$(date +%s) # Records the start time
+    "$executable_path" "$input" "temp/data_t.dat" "-t"
     show_elapsed_second "Option -t has taken : " "$start"
-    gnuplot -c "progc/s.gnu" "temp/data_s.dat"
+    gnuplot -c "progc/gnuplots/t.gnu" "temp/data_t.dat"
 fi
 
 if isset "$s"; then
     start=$(date +%s) # Records the start time
+    "$executable_path" "$input" "temp/data_s.dat" "-s"
     show_elapsed_second "Option -s has taken : " "$start"
+    gnuplot -c "progc/gnuplots/s.gnu" "temp/data_s.dat"
 fi
