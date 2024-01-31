@@ -17,14 +17,14 @@ City* constructCity(char* townName, char* driverName) {
     return newCity;
 }
 
-void bubbleSort(City* arr[], int n) {
+void bubbleSort(City* arr[], int limit) {
     int i, j;
     City* temp;
 
-    for (i = 0; i < n - 1; i++) {
-        for (j = 0; j < n - i - 1; j++) {
+    for (i = 0; i < limit - 1; i++) {
+        for (j = 0; j < limit - i - 1; j++) {
             if (strcmp(arr[j]->name, arr[j + 1]->name) > 0) {
-                // Swap the elements if they are in the wrong order
+                // swap the elements if they are in the wrong order
                 temp = arr[j];
                 arr[j] = arr[j + 1];
                 arr[j + 1] = temp;
@@ -51,60 +51,62 @@ AVL* constructCitiesSorted(AVL* cities, AVL* citiesSorted)
 	return citiesSorted;
 } 
 
-void getTopCities(AVL* cities, FILE* outputFile, City* citiesSortedAlphabetacally[], int* counter) 
+void getTopCities(AVL* cities, FILE* outputFile, City* citiesSortedAlphabetically[], int* counter) 
 { 
     if(cities != NULL && *counter > 0) 
     { 
-		getTopCities(cities->right, outputFile, citiesSortedAlphabetacally, counter); 
+		getTopCities(cities->right, outputFile, citiesSortedAlphabetically, counter); 
 		if (*counter == 0) {
 			return;
 		}
 		
 		City* city = (City*)cities->element;
 		(*counter)--;
-		citiesSortedAlphabetacally[*counter] = city;
+		citiesSortedAlphabetically[*counter] = city;
         
-		getTopCities(cities->left, outputFile, citiesSortedAlphabetacally, counter); 
+		getTopCities(cities->left, outputFile, citiesSortedAlphabetically, counter); 
 		if (*counter == 0) {
 			return;
 		}
     } 
 } 
 
-void sortT(FILE* inputFile, FILE* outputFile) {
+void sortCities(FILE* inputFile, FILE* outputFile) {
 	// Racine de l'arbre AVL
 	AVL* cities = NULL;
 
-	int idRoute, idEtape, distance;
-	char villeA[TAILLE], villeB[TAILLE], driverName[TAILLE];
-	char ligne[TAILLE];
-	char** ligneTab = NULL;
-	int h = 1;
+	int idRoute, idStep, distance;
+	char townA[NAME_SIZE], townB[NAME_SIZE], driverName[NAME_SIZE];
 	
-    fgets(ligne, sizeof(ligne), inputFile);
-	while(fgets(ligne, sizeof(ligne), inputFile) != NULL) // on lit chaque ligne
+	char line[LINE_SIZE];
+	char** lineArray = NULL;
+
+	printf("Making cities AVL... 1/4\n");
+	
+    fgets(line, sizeof(line), inputFile); // Skip header
+	while(fgets(line, sizeof(line), inputFile) != NULL) // Read each line of input file
 	{
 		// et on les sépares par leur ';' avant de stocker les informations importantes
-		ligneTab = ligneToTab(ligne);
-		if (sscanf(ligneTab[0], "%d", &idRoute) != 1) {
+		lineArray = lineToArray(line);
+		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide, columne 1.\n");
 			exit(1);
 		}
-		if (sscanf(ligneTab[1], "%d", &idEtape) != 1) {
+		if (sscanf(lineArray[1], "%d", &idStep) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide, columne 2.\n");
 			exit(1);
 		}
-		strcpy(villeA, ligneTab[2]);
-		strcpy(villeB, ligneTab[3]);
-		if (sscanf(ligneTab[4], "%d", &distance) != 1) {
+		strcpy(townA, lineArray[2]);
+		strcpy(townB, lineArray[3]);
+		if (sscanf(lineArray[4], "%d", &distance) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide3.\n");
 			exit(1);
 		}
-		strcpy(driverName, ligneTab[5]);
+		strcpy(driverName, lineArray[5]);
 
-		AVL* element = searchKeyAVL(cities, hash(villeA));
+		AVL* element = searchKeyAVL(cities, hash(townA));
         if (element == NULL){
-            cities = insertAVL(cities, hash(villeA), constructCity(villeA, driverName));
+            cities = insertAVL(cities, hash(townA), constructCity(townA, driverName));
         }
         else {
             City* city = (City*)element->element;
@@ -116,9 +118,9 @@ void sortT(FILE* inputFile, FILE* outputFile) {
 			}
         }
         
-        element = searchKeyAVL(cities, hash(villeB));
+        element = searchKeyAVL(cities, hash(townB));
         if (element == NULL){
-            cities = insertAVL(cities, hash(villeB), constructCity(villeB, driverName));
+            cities = insertAVL(cities, hash(townB), constructCity(townB, driverName));
         } else {
             City* city = (City*)element->element;
             city->totalRoutes++;
@@ -132,27 +134,39 @@ void sortT(FILE* inputFile, FILE* outputFile) {
 
 	fclose(inputFile);
 
-	AVL* citiesSorted = NULL;
+	printf("Making cities AVL by routes... 2/4\n");
 
-    citiesSorted = constructCitiesSorted(cities, citiesSorted);
+	// Construct a AVL from the routes count as keys
+	AVL* citiesRoutesSorted = NULL;
 
-	City* citiesSortedAlphabetacally[10] = {NULL};
+    citiesRoutesSorted = constructCitiesSorted(cities, citiesRoutesSorted);
+
+	printf("Get top 10 cities with most routes... 3/4\n");
+
+	// Array for the top ten cities with the most routes
+	City* citiesSortedAlphabetically[10] = {NULL};
 
 	int counter = 10;
 	
-	getTopCities(citiesSorted, outputFile, citiesSortedAlphabetacally, &counter);
+	// Get the top 10 city with the most routes
+	getTopCities(citiesRoutesSorted, outputFile, citiesSortedAlphabetically, &counter);
+
+	printf("Sort cities alphabetically... 4/4\n");
 	
-	bubbleSort(citiesSortedAlphabetacally, 10);
+	// Sort the cities alphabetically
+	bubbleSort(citiesSortedAlphabetically, 10);
 	
+	// Write cities to output file
 	for (int i = 0; i < 10; i++){
-		if (citiesSortedAlphabetacally[i] != NULL){
-			City* city = citiesSortedAlphabetacally[i];
+		if (citiesSortedAlphabetically[i] != NULL){
+			City* city = citiesSortedAlphabetically[i];
 			fprintf(outputFile, "%s;%d;%d\n", city->name, city->totalRoutes, city->firstTown);
 		}
 	}
 
 	fclose(outputFile);
 
-	// Libérer la mémoire utilisée par l'arbre AVL
+	// Free memory from AVL trees
 	destroyAVL(cities);
+	destroyAVL(citiesRoutesSorted);
 }

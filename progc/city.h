@@ -4,11 +4,8 @@
 #include "avl.h"
 #include "utils.h"
 
-#define GRANDETAILLE 10000
-
-// Structure pour représenter une ville
 typedef struct _Ville {
-	char name[TAILLE];
+	char name[NAME_SIZE];
 	int totalRoutes; 
 	int firstTown; // drivers count
 	AVL* drivers;
@@ -20,7 +17,6 @@ AVL* constructCitiesSorted(AVL* cities, AVL* citiesSorted);
 
 void getTopCities(AVL* cities, FILE* outputFile, City* citiesSortedAlphabetacally[], int* counter);
 
-// Fonction principale pour analyser les trajets à partir d'un fichier
-void sortT(FILE* inputFile, FILE* outputFile);
+void sortCities(FILE* inputFile, FILE* outputFile);
 
 #endif

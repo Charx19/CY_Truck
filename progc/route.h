@@ -7,7 +7,6 @@
 
 #include "avl.h"
 
-// Structure pour représenter une Route
 typedef struct _Route {
 	int id;
 	float max;
@@ -25,6 +24,6 @@ AVL* constructRoutesMinxMaxSortedAVL(AVL* root, AVL* routes);
 void writeRouteDatas(AVL* routes, FILE* file, int* counter, int limit);
 
 // Fonction principale pour analyser les trajets à partir d'un fichier
-void sortS(FILE* inputFile, FILE* outputFile);
+void sortRoutes(FILE* inputFile, FILE* outputFile);
 
 #endif

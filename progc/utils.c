@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "utils.h"
 
-char** ligneToTab(char* l)
+char** lineToArray(char* l)
 {
 	char c;
 	char* s = &c;
@@ -36,7 +37,7 @@ char** ligneToTab(char* l)
 	res = malloc(sizeof(char*) * count);
 	if(res == NULL)
 	{
-			printf("erreur");   //// METS TON MESSAGE DERREUR ICI
+			printf("Error");
 	}
 
 	int idx  = 0;
@@ -69,7 +70,6 @@ float min2f(float a, float b){
 	return (a < b) ? a : b;
 }
 
-// https://stackoverflow.com/questions/20462826/hash-function-for-strings-in-c
 int hash(char *str)
 {
     int hash = 0;

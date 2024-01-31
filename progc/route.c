@@ -48,48 +48,51 @@ void writeRouteDatas(AVL* routes, FILE* file, int* counter, int limit)
 		if (*counter == 0) {
 			return;
 		}
+		
 		fprintf(file, "%d;%d;%f;%f;%f;%f\n", limit - *counter, route->id, route->min, route->sum / route->n, route->max, route->max - route->min);
 		(*counter)--;
-        writeRouteDatas(routes->left, file, counter, limit);
+        
+		writeRouteDatas(routes->left, file, counter, limit);
 		if (*counter == 0) {
 			return;
 		}
     } 
 } 
 
-// Fonction principale pour analyser les trajets à partir d'un fichier
-void sortS(FILE* inputFile, FILE* outputFile) {
-	// Racine de l'arbre AVL
+void sortRoutes(FILE* inputFile, FILE* outputFile) {
 	AVL* routes = NULL;
 
 	int idRoute, idStep;
 	float distance;
-	char townA[TAILLE], townB[TAILLE], driverName[TAILLE];
-	char ligne[TAILLE];
-	char** ligneTab = NULL;
+	char townA[NAME_SIZE], townB[NAME_SIZE], driverName[NAME_SIZE];
 	
-    fgets(ligne, sizeof(ligne), inputFile);
-	while(fgets(ligne, sizeof(ligne), inputFile) != NULL) // on lit chaque ligne
+	char line[LINE_SIZE];
+	char** lineArray = NULL;
+
+	printf("Making routes AVL... 1/3\n");
+	
+    fgets(line, sizeof(line), inputFile); // Skip header
+	while(fgets(line, sizeof(line), inputFile) != NULL) // Read each line of input file
 	{
 		// et on les sépares par leur ';' avant de stocker les informations importantes
-		ligneTab = ligneToTab(ligne);
-		if (sscanf(ligneTab[0], "%d", &idRoute) != 1) {
+		lineArray = lineToArray(line);
+		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide1.\n");
 			exit(1);
 		}
-		if (sscanf(ligneTab[1], "%d", &idStep) != 1) {
+		if (sscanf(lineArray[1], "%d", &idStep) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide2.\n");
 			exit(1);
 		}
-		strcpy(townA, ligneTab[2]);
-		strcpy(townB, ligneTab[3]);
-		if (sscanf(ligneTab[4], "%f", &distance) != 1) {
+		strcpy(townA, lineArray[2]);
+		strcpy(townB, lineArray[3]);
+		if (sscanf(lineArray[4], "%f", &distance) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide3.\n");
 			exit(1);
 		}
-		strcpy(driverName, ligneTab[5]);
+		strcpy(driverName, lineArray[5]);
 
-		// Construct a AVL from the idRoute as key
+		// Construct a AVL with the route ID as a key
 		AVL* element = NULL;
 		element = searchKeyAVL(routes, idRoute);
 		if (element == NULL) {
@@ -105,15 +108,18 @@ void sortS(FILE* inputFile, FILE* outputFile) {
 
 	fclose(inputFile);
 
+	printf("Sorting routes AVL from minmax... 2/3\n");
+
 	// Construct a AVL from the minmax as keys
 	AVL* routesMinMaxSorted = NULL;
 
 	routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes, routesMinMaxSorted);
 
-	// Write routes data sorted from minmax in "data_s.dat"
+	printf("Writing sorted data... 3/3\n");
+
+	// Write routes data sorted from minmax in the output file
     int counter = 50;
-	int limit = counter + 1;
-	writeRouteDatas(routesMinMaxSorted, outputFile, &counter, limit);
+	writeRouteDatas(routesMinMaxSorted, outputFile, &counter, counter + 1);
 
 	fclose(outputFile);
 

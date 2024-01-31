@@ -30,8 +30,6 @@ AVL* rotateDoubleLeft(AVL *avl);
 
 AVL* rotateDoubleRight(AVL *avl);
 
-void preOrder(AVL*root);
-
 void destroyAVL(AVL* root);
 
 #endif

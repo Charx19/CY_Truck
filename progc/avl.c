@@ -60,17 +60,13 @@ AVL* insertAVL(AVL* node, float key, void* element)
         return rotateLeft(node); 
   
     // Left Right Case 
-    if (balance > 1 && key > node->left->key) 
-    { 
-        node->left =  rotateLeft(node->left); 
-        return rotateRight(node); 
+    if (balance > 1 && key > node->left->key) { 
+        return rotateDoubleRight(node);
     } 
   
     // Right Left Case 
-    if (balance < -1 && key < node->right->key) 
-    { 
-        node->right = rotateRight(node->right); 
-        return rotateLeft(node); 
+    if (balance < -1 && key < node->right->key) { 
+        return rotateDoubleLeft(node);
     } 
   
     /* return the (unchanged) node pointer */
@@ -124,16 +120,6 @@ AVL* rotateDoubleRight(AVL *avl) {
     avl->left = rotateLeft(avl->left);
     return rotateRight(avl);
 }
-
-void preOrder(AVL*root) 
-{ 
-    if(root != NULL) 
-    { 
-        printf("%f ", root->key); 
-        preOrder(root->left); 
-        preOrder(root->right); 
-    } 
-} 
 
 void destroyAVL(AVL* root) {
     if (root != NULL) {
