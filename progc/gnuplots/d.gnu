@@ -1,6 +1,6 @@
 #!/usr/bin/gnuplot --persist
 
-# ARG1 = Data file
+# ARG1 = Input data file
 # ARG2 = Mode
 # ARG3 = Y label
 # ARG4 = X label
