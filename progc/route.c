@@ -73,7 +73,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
     fgets(line, sizeof(line), inputFile); // Skip header
 	while(fgets(line, sizeof(line), inputFile) != NULL) // Read each line of input file
 	{
-		// Separing by ';' to get informations
+		// Separating by ';' to get informations
 		lineArray = lineToArray(line);
 		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide1.\n");

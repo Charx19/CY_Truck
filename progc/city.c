@@ -72,7 +72,6 @@ void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically
 } 
 
 void sortCities(FILE* inputFile, FILE* outputFile) {
-	// Racine de l'arbre AVL
 	AVL* cities = NULL;
 
 	int idRoute, idStep, distance;
@@ -86,7 +85,7 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
     fgets(line, sizeof(line), inputFile); // Skip header
 	while(fgets(line, sizeof(line), inputFile) != NULL) // Read each line of input file
 	{
-		// et on les sépares par leur ';' avant de stocker les informations importantes
+		// Separating by ';' to get informations
 		lineArray = lineToArray(line);
 		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide, columne 1.\n");
