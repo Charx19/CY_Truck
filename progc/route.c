@@ -6,7 +6,6 @@
 #include "avl.h"
 #include "utils.h"
 
-// Fonction pour créer un nouveau nœud de Route
 Route* createRoute(int id, float distance) {
 	Route* newRoute = (Route*)malloc(sizeof(Route));
 	
@@ -38,13 +37,13 @@ AVL* constructRoutesMinxMaxSortedAVL(AVL* routes, AVL* routesMinMaxSorted)
 	return routesMinMaxSorted;
 } 
 
-void writeRouteDatas(AVL* routes, FILE* file, int* counter, int limit) 
+void writeRouteDatas(AVL* routesMinMaxSorted, FILE* file, int* counter, int limit) 
 { 
-    if(routes != NULL && *counter > 0) 
+    if(routesMinMaxSorted != NULL && *counter > 0) 
     { 
-		Route* route = (Route*)routes->element;
+		Route* route = (Route*)routesMinMaxSorted->element;
 
-		writeRouteDatas(routes->right, file, counter, limit);
+		writeRouteDatas(routesMinMaxSorted->right, file, counter, limit);
 		if (*counter == 0) {
 			return;
 		}
@@ -52,7 +51,7 @@ void writeRouteDatas(AVL* routes, FILE* file, int* counter, int limit)
 		fprintf(file, "%d;%d;%f;%f;%f;%f\n", limit - *counter, route->id, route->min, route->sum / route->n, route->max, route->max - route->min);
 		(*counter)--;
         
-		writeRouteDatas(routes->left, file, counter, limit);
+		writeRouteDatas(routesMinMaxSorted->left, file, counter, limit);
 		if (*counter == 0) {
 			return;
 		}
@@ -74,7 +73,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
     fgets(line, sizeof(line), inputFile); // Skip header
 	while(fgets(line, sizeof(line), inputFile) != NULL) // Read each line of input file
 	{
-		// et on les sépares par leur ';' avant de stocker les informations importantes
+		// Separing by ';' to get informations
 		lineArray = lineToArray(line);
 		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
 			printf("Erreur de conversion. La chaîne n'est pas un nombre valide1.\n");
@@ -94,10 +93,13 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 
 		// Construct a AVL with the route ID as a key
 		AVL* element = NULL;
+		// Search route if its exist in the AVL with the route ID
 		element = searchKeyAVL(routes, idRoute);
+		// If route doesn't exist in the AVL, insert it
 		if (element == NULL) {
 			routes = insertAVL(routes, idRoute, createRoute(idRoute, distance));
 		} else {
+			// Update value of route
 			Route* route = (Route*)element->element;
 			route->max = max2f(distance, route->max);
 			route->min = min2f(distance, route->min);
@@ -110,7 +112,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 
 	printf("Sorting routes AVL from minmax... 2/3\n");
 
-	// Construct a AVL from the minmax as keys
+	// Construct a AVL from the minmax as keys (minmax = max - min)
 	AVL* routesMinMaxSorted = NULL;
 
 	routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes, routesMinMaxSorted);
@@ -118,7 +120,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 	printf("Writing sorted data... 3/3\n");
 
 	// Write routes data sorted from minmax in the output file
-    int counter = 50;
+	int counter = 50;
 	writeRouteDatas(routesMinMaxSorted, outputFile, &counter, counter + 1);
 
 	fclose(outputFile);

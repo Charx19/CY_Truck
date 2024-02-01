@@ -17,54 +17,54 @@ City* constructCity(char* townName, char* driverName) {
     return newCity;
 }
 
-void bubbleSort(City* arr[], int limit) {
+void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
     int i, j;
     City* temp;
 
-    for (i = 0; i < limit - 1; i++) {
-        for (j = 0; j < limit - i - 1; j++) {
-            if (strcmp(arr[j]->name, arr[j + 1]->name) > 0) {
+    for (i = 0; i < arraySize - 1; i++) {
+        for (j = 0; j < arraySize - i - 1; j++) {
+            if (strcmp(citiesSortedAlphabetically[j]->name, citiesSortedAlphabetically[j + 1]->name) > 0) {
                 // swap the elements if they are in the wrong order
-                temp = arr[j];
-                arr[j] = arr[j + 1];
-                arr[j + 1] = temp;
+                temp = citiesSortedAlphabetically[j];
+                citiesSortedAlphabetically[j] = citiesSortedAlphabetically[j + 1];
+                citiesSortedAlphabetically[j + 1] = temp;
             }
         }
     }
 }
 
-AVL* constructCitiesSorted(AVL* cities, AVL* citiesSorted) 
+AVL* constructCitiesTotalRoutesSorted(AVL* cities, AVL* citiesTotalRoutesSorted) 
 { 
     if(cities != NULL) 
     { 
-		citiesSorted = constructCitiesSorted(cities->left, citiesSorted);
+		citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->left, citiesTotalRoutesSorted);
 
 		City* city = (City*)cities->element;
 		AVL* element = NULL;
-		element = searchKeyAVL(citiesSorted, city->totalRoutes);
+		element = searchKeyAVL(citiesTotalRoutesSorted, city->totalRoutes);
 		if (element == NULL) {
-			citiesSorted = insertAVL(citiesSorted, city->totalRoutes, city);
+			citiesTotalRoutesSorted = insertAVL(citiesTotalRoutesSorted, city->totalRoutes, city);
 		}
 
-        citiesSorted = constructCitiesSorted(cities->right, citiesSorted); 
+        citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->right, citiesTotalRoutesSorted); 
     } 
-	return citiesSorted;
+	return citiesTotalRoutesSorted;
 } 
 
-void getTopCities(AVL* cities, FILE* outputFile, City* citiesSortedAlphabetically[], int* counter) 
+void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically[], int* counter) 
 { 
-    if(cities != NULL && *counter > 0) 
+    if(citiesTotalRoutesSorted != NULL && *counter > 0) 
     { 
-		getTopCities(cities->right, outputFile, citiesSortedAlphabetically, counter); 
+		getTopCities(citiesTotalRoutesSorted->right, citiesSortedAlphabetically, counter); 
 		if (*counter == 0) {
 			return;
 		}
 		
-		City* city = (City*)cities->element;
+		City* city = (City*)citiesTotalRoutesSorted->element;
 		(*counter)--;
 		citiesSortedAlphabetically[*counter] = city;
         
-		getTopCities(cities->left, outputFile, citiesSortedAlphabetically, counter); 
+		getTopCities(citiesTotalRoutesSorted->left, citiesSortedAlphabetically, counter); 
 		if (*counter == 0) {
 			return;
 		}
@@ -139,7 +139,7 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 	// Construct a AVL from the routes count as keys
 	AVL* citiesRoutesSorted = NULL;
 
-    citiesRoutesSorted = constructCitiesSorted(cities, citiesRoutesSorted);
+    citiesRoutesSorted = constructCitiesTotalRoutesSorted(cities, citiesRoutesSorted);
 
 	printf("Get top 10 cities with most routes... 3/4\n");
 
@@ -149,7 +149,7 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 	int counter = 10;
 	
 	// Get the top 10 city with the most routes
-	getTopCities(citiesRoutesSorted, outputFile, citiesSortedAlphabetically, &counter);
+	getTopCities(citiesRoutesSorted, citiesSortedAlphabetically, &counter);
 
 	printf("Sort cities alphabetically... 4/4\n");
 	

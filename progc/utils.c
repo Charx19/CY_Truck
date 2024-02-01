@@ -16,7 +16,7 @@ char** lineToArray(char* l)
 	delim[0] = ';';
 	delim[1] = 0;
 	
-	// compte le nombre d'elements a extraire
+	// Count number of elements to extract
 	while (*tmp)
 	{
 		if (';' == *tmp)
@@ -27,7 +27,7 @@ char** lineToArray(char* l)
 			tmp++;
 	}
 
-	// ajoute de l'espace pour le token
+	// Add space for the token
 	if(last_comma < (l + strlen(l) - 1))
 	{
 		count ++;

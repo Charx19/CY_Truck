@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+// https://www.geeksforgeeks.org/insertion-in-an-avl-tree/
+
 typedef struct _AVL {
     float key;
     void* element;
