@@ -290,7 +290,7 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 		strcpy(townA, lineArray[2]);
 		strcpy(townB, lineArray[3]);
 		if (sscanf(lineArray[4], "%d", &distance) != 1) {
-			printf("Conversion Error, string is not a valid number (Column 4)\n");
+			printf("Conversion Error, string is not a valid number (Column 5)\n");
 			exit(1);
 		}
 		strcpy(driverName, lineArray[5]);

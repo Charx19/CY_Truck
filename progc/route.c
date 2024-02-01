@@ -30,12 +30,12 @@ AVL* insertRouteAVL(AVL* routes, int idRoute, float distance)
     if (idRoute < route->id) {
 		routes->left  = insertRouteAVL(routes->left, idRoute, distance); 
 	}
-        
     else if (idRoute > route->id) {
 		routes->right = insertRouteAVL(routes->right, idRoute, distance); 
 	}
         
     else {
+		// If the route ID already exist, update the values
 		route->max = max2f(distance, route->max);
 		route->min = min2f(distance, route->min);
 		route->sum += distance;
@@ -208,7 +208,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 		strcpy(townA, lineArray[2]);
 		strcpy(townB, lineArray[3]);
 		if (sscanf(lineArray[4], "%f", &distance) != 1) {
-			printf("Conversion Error, string is not a valid number (Column 4)\n");
+			printf("Conversion Error, string is not a valid number (Column 5)\n");
 			exit(1);
 		}
 		strcpy(driverName, lineArray[5]);

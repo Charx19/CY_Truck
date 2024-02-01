@@ -13,10 +13,31 @@ typedef struct _AVL {
     int height;
 } AVL;
 
+/*
+* Construct a struct AVL
+*
+* element : The element we put in the AVL
+*
+* returns : A struct AVL
+*/ 
 AVL* createAVL(void* element);
 
+/*
+* Get the height of the AVL
+*
+* node = The AVL we want to get the height of
+*
+* returns : The height of the AVL
+*/
 int getHeight(AVL* node);
 
+/*
+* Get the balance factor of the AVL
+*
+* node = The AVL we want to get the balance factor of
+*
+* returns : The balance factor of the AVL
+*/
 int getBalance(AVL* node);
 
 AVL* rotateLeft(AVL* x);
