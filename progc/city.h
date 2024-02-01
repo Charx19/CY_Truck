@@ -7,9 +7,8 @@
 typedef struct {
 	char name[NAME_SIZE]; // Name of the city
 	int totalRoutes; // The total routes count tied to that city
-	int firstTown; // drivers count
-	AVL* drivers; // AVL for the drivers so its doesn't count twice
-	AVL* idRoutes; // AVL for the drivers so its doesn't count twice
+	int firstTown; // first town count
+	AVL* idRoutes; // AVL for the routes ID so its doesn't count twice
 } City;
 
 typedef struct {
@@ -28,12 +27,6 @@ IdRoute* constructIdRoute(int idRoute);
 */ 
 City* constructCity(char* townName, int idRoute);
 
-AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare);
-
-AVL* insertCityAVL(AVL* cities, char* townName, int idRoute, int isStart);
-
-AVL* insertCityTotalRoutesSortedAVL(AVL* node, int totalRoutes, City* element);
-
 /*
 * Sort a array of City by their name alphabetically
 *
@@ -43,7 +36,41 @@ AVL* insertCityTotalRoutesSortedAVL(AVL* node, int totalRoutes, City* element);
 void bubbleSort(City* citiesSortedAlphabetically[], int arraySize);
 
 /*
-* Construct a AVL containing the cities with the total routes as key
+* Insert a AVL node sorted by route ID
+*
+* idRoutes : AVL containing the route IDs
+* city : The city attached to that route ID, and count it if its not in the AVL
+* idRouteToCompare : The route ID to compare, to see if it's in the AVL
+*
+* returns : AVL containing the routes sorted by route IDs
+*/ 
+AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare);
+
+/*
+* Insert a AVL node sorted by town names
+*
+* cities : AVL containing the routes sorted by town names
+* townName : The town name used for the struct City construction
+* idRoute : The route ID used for the struct City construction
+* isStart : If the town is the starting point
+*
+* returns : AVL containing the routes sorted by route IDs
+*/ 
+AVL* insertCityAVL(AVL* cities, char* townName, int idRoute, int isStart);
+
+/*
+* Insert a AVL node sorted by town total routes
+*
+* citiesTotalRoutesSorted : AVL containing the routes sorted by town total routes
+* totalRoutes : The town total routes to compare
+* element : The existing route to re-use for the new AVL
+*
+* returns : AVL containing the routes sorted by town total routes
+*/ 
+AVL* insertCityTotalRoutesSortedAVL(AVL* citiesTotalRoutesSorted, int totalRoutes, City* element);
+
+/*
+* Construct a AVL containing the cities with the total routes as key, by using the cities AVL
 *
 * cities : AVL containing the cities with the townName in hash as key
 * citiesTotalRoutesSorted : AVL containing the cities with the total routes as key

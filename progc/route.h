@@ -26,12 +26,30 @@ typedef struct {
 */ 
 Route* createRoute(int id, float distance);
 
-AVL* insertRouteAVL(AVL* node, int idRoute, float distance);
-
-AVL* insertRouteMinxMaxAVL(AVL* node, float minMax, Route* element);
+/*
+* Insert a AVL node sorted by route ID
+*
+* routes : AVL containing the routes sorted by route IDs
+* idRoute : The route ID used for the struct Route construction
+* distance : The distance of the route used for the struct Route construction
+*
+* returns : AVL containing the routes sorted by route IDs
+*/ 
+AVL* insertRouteAVL(AVL* routes, int idRoute, float distance);
 
 /*
-* Construct a AVL with minMax as key
+* Insert a AVL node sorted by minMax
+*
+* routesMinMaxSorted : AVL containing the routes sorted by minMaxs
+* minMax : The minMax to compare
+* element : The existing route to re-use for the new AVL
+*
+* returns : AVL containing the routes sorted by minMaxs
+*/ 
+AVL* insertRouteMinMaxAVL(AVL* routesMinMaxSorted, float minMax, Route* element);
+
+/*
+* Construct a AVL with minMax as key, by using the routes AVL
 *
 * routes : AVL containing the routes with the route ID as keys
 * routesMinMaxSorted : AVL containing the routes with minMax as key

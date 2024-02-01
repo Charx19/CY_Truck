@@ -25,6 +25,22 @@ City* constructCity(char* townName, int idRoute) {
     return newCity;
 }
 
+void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
+    int i, j;
+    City* temp;
+
+    for (i = 0; i < arraySize - 1; i++) {
+        for (j = 0; j < arraySize - i - 1; j++) {
+            if (strcmp(citiesSortedAlphabetically[j]->name, citiesSortedAlphabetically[j + 1]->name) > 0) {
+                // swap the elements if they are in the wrong order
+                temp = citiesSortedAlphabetically[j];
+                citiesSortedAlphabetically[j] = citiesSortedAlphabetically[j + 1];
+                citiesSortedAlphabetically[j + 1] = temp;
+            }
+        }
+    }
+}
+
 AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare) 
 { 
     if (idRoutes == NULL) {
@@ -86,21 +102,21 @@ AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare)
     return idRoutes; 
 }
 
-AVL* insertCityAVL(AVL* node, char* townName, int idRoute, int isStart) 
+AVL* insertCityAVL(AVL* cities, char* townName, int idRoute, int isStart) 
 { 
-    if (node == NULL) {
+    if (cities == NULL) {
 		
 		return(createAVL(constructCity(townName, idRoute)));
 	}
         
-	City* city = (City*)node->element;
+	City* city = (City*)cities->element;
   
     if (strcmp(townName, city->name) < 0) {
-		node->left  = insertCityAVL(node->left, townName, idRoute, isStart); 
+		cities->left  = insertCityAVL(cities->left, townName, idRoute, isStart); 
 	}
         
     else if (strcmp(townName, city->name) > 0) {
-		node->right = insertCityAVL(node->right, townName, idRoute, isStart); 
+		cities->right = insertCityAVL(cities->right, townName, idRoute, isStart); 
 	}
         
     else {
@@ -109,107 +125,107 @@ AVL* insertCityAVL(AVL* node, char* townName, int idRoute, int isStart)
 		if (isStart == 1){
 			city->firstTown++;
 		}
-		return node; 
+		return cities; 
 	}
 	
-    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+    cities->height = 1 + max2i(getHeight(cities->left), getHeight(cities->right)); 
   
-    int balance = getBalance(node); 
+    int balance = getBalance(cities); 
 
     // Left Left Case 
     if (balance > 1) {
-		City* cityLeft = (City*)node->left->element;
+		City* cityLeft = (City*)cities->left->element;
 		if (strcmp(townName, cityLeft->name) < 0) {
-			return rotateRight(node);
+			return rotateRight(cities);
 		}
 	}
          
     // Right Right Case 
     if (balance < -1) {
-		City* cityRight = (City*)node->right->element;
+		City* cityRight = (City*)cities->right->element;
 		if (strcmp(townName, cityRight->name) > 0) {
-			return rotateLeft(node); 
+			return rotateLeft(cities); 
 		}
 		
 	}
         
     // Left Right Case 
     if (balance > 1) { 
-		City* cityLeft = (City*)node->left->element;
+		City* cityLeft = (City*)cities->left->element;
 		if (strcmp(townName, cityLeft->name) > 0){
-			return rotateDoubleRight(node);
+			return rotateDoubleRight(cities);
 		}
     } 
   
     // Right Left Case 
     if (balance < -1) { 
-		City* cityRight = (City*)node->right->element;
+		City* cityRight = (City*)cities->right->element;
 		if (strcmp(townName, cityRight->name) < 0){
-			return rotateDoubleLeft(node);
+			return rotateDoubleLeft(cities);
 		}
     } 
   
-    return node; 
+    return cities; 
 } 
 
-AVL* insertCityTotalRoutesSortedAVL(AVL* node, int totalRoutes, City* element)
+AVL* insertCityTotalRoutesSortedAVL(AVL* citiesTotalRoutesSorted, int totalRoutes, City* element)
 {
-	if (node == NULL) {
+	if (citiesTotalRoutesSorted == NULL) {
 		return(createAVL(element));
 	}
         
-	City* city = (City*)node->element;
+	City* city = (City*)citiesTotalRoutesSorted->element;
   
     if (totalRoutes < city->totalRoutes) {
-		node->left  = insertCityTotalRoutesSortedAVL(node->left, totalRoutes, element); 
+		citiesTotalRoutesSorted->left  = insertCityTotalRoutesSortedAVL(citiesTotalRoutesSorted->left, totalRoutes, element); 
 	}
         
     else if (totalRoutes > city->totalRoutes) {
-		node->right = insertCityTotalRoutesSortedAVL(node->right, totalRoutes, element); 
+		citiesTotalRoutesSorted->right = insertCityTotalRoutesSortedAVL(citiesTotalRoutesSorted->right, totalRoutes, element); 
 	}
         
     else {
-		return node; 
+		return citiesTotalRoutesSorted; 
 	}
 	
-    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+    citiesTotalRoutesSorted->height = 1 + max2i(getHeight(citiesTotalRoutesSorted->left), getHeight(citiesTotalRoutesSorted->right)); 
   
-    int balance = getBalance(node); 
+    int balance = getBalance(citiesTotalRoutesSorted); 
 
     // Left Left Case 
     if (balance > 1) {
-		City* cityLeft = (City*)node->left->element;
+		City* cityLeft = (City*)citiesTotalRoutesSorted->left->element;
 		if (totalRoutes < cityLeft->totalRoutes) {
-			return rotateRight(node);
+			return rotateRight(citiesTotalRoutesSorted);
 		}
 	}
          
     // Right Right Case 
     if (balance < -1) {
-		City* cityRight = (City*)node->right->element;
+		City* cityRight = (City*)citiesTotalRoutesSorted->right->element;
 		if (totalRoutes > cityRight->totalRoutes) {
-			return rotateLeft(node); 
+			return rotateLeft(citiesTotalRoutesSorted); 
 		}
 		
 	}
         
     // Left Right Case 
     if (balance > 1) { 
-		City* cityLeft = (City*)node->left->element;
+		City* cityLeft = (City*)citiesTotalRoutesSorted->left->element;
 		if (totalRoutes > cityLeft->totalRoutes){
-			return rotateDoubleRight(node);
+			return rotateDoubleRight(citiesTotalRoutesSorted);
 		}
     } 
   
     // Right Left Case 
     if (balance < -1) { 
-		City* cityRight = (City*)node->right->element;
+		City* cityRight = (City*)citiesTotalRoutesSorted->right->element;
 		if (totalRoutes < cityRight->totalRoutes){
-			return rotateDoubleLeft(node);
+			return rotateDoubleLeft(citiesTotalRoutesSorted);
 		}
     } 
   
-    return node; 
+    return citiesTotalRoutesSorted; 
 }
 
 AVL* constructCitiesTotalRoutesSorted(AVL* cities, AVL* citiesTotalRoutesSorted) 
@@ -225,24 +241,6 @@ AVL* constructCitiesTotalRoutesSorted(AVL* cities, AVL* citiesTotalRoutesSorted)
     } 
 	return citiesTotalRoutesSorted;
 } 
-
-
-void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
-    int i, j;
-    City* temp;
-
-    for (i = 0; i < arraySize - 1; i++) {
-        for (j = 0; j < arraySize - i - 1; j++) {
-            if (strcmp(citiesSortedAlphabetically[j]->name, citiesSortedAlphabetically[j + 1]->name) > 0) {
-                // swap the elements if they are in the wrong order
-                temp = citiesSortedAlphabetically[j];
-                citiesSortedAlphabetically[j] = citiesSortedAlphabetically[j + 1];
-                citiesSortedAlphabetically[j + 1] = temp;
-            }
-        }
-    }
-}
-
 
 void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically[], int* counter) 
 { 
@@ -264,23 +262,10 @@ void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically
     } 
 } 
 
-
-void test(FILE* outputFile, AVL* citiesTotalRoutesSorted) 
-{ 
-    if(citiesTotalRoutesSorted != NULL) 
-    { 
-		test(outputFile, citiesTotalRoutesSorted->left); 
-		
-		City* city = (City*)citiesTotalRoutesSorted->element;
-		fprintf(outputFile, "%s;%d;%d\n", city->name, city->totalRoutes, city->firstTown);
-		
-		test(outputFile, citiesTotalRoutesSorted->right); 
-    } 
-} 
-
 void sortCities(FILE* inputFile, FILE* outputFile) {
 	AVL* cities = NULL;
 
+	// Get file contents
 	int idRoute, idStep, distance;
 	char townA[NAME_SIZE], townB[NAME_SIZE], driverName[NAME_SIZE];
 	
@@ -295,17 +280,17 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 		// Separating by ';' to get informations
 		lineArray = lineToArray(line);
 		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide, columne 1.\n");
+			printf("Conversion Error, string is not a valid number (Column 1)\n");
 			exit(1);
 		}
 		if (sscanf(lineArray[1], "%d", &idStep) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide, columne 2.\n");
+			printf("Conversion Error, string is not a valid number (Column 2)\n");
 			exit(1);
 		}
 		strcpy(townA, lineArray[2]);
 		strcpy(townB, lineArray[3]);
 		if (sscanf(lineArray[4], "%d", &distance) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide3.\n");
+			printf("Conversion Error, string is not a valid number (Column 4)\n");
 			exit(1);
 		}
 		strcpy(driverName, lineArray[5]);
@@ -320,6 +305,7 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 	}
 
 	fclose(inputFile);
+	//
 
 	printf("Making cities AVL by routes... 2/4\n");
 

@@ -19,20 +19,20 @@ Route* createRoute(int id, float distance) {
 	return newRoute;
 }
 
-AVL* insertRouteAVL(AVL* node, int idRoute, float distance) 
+AVL* insertRouteAVL(AVL* routes, int idRoute, float distance) 
 { 
-    if (node == NULL) {
+    if (routes == NULL) {
 		return(createAVL(createRoute(idRoute, distance)));
 	}
         
-	Route* route = (Route*)node->element;
+	Route* route = (Route*)routes->element;
   
     if (idRoute < route->id) {
-		node->left  = insertRouteAVL(node->left, idRoute, distance); 
+		routes->left  = insertRouteAVL(routes->left, idRoute, distance); 
 	}
         
     else if (idRoute > route->id) {
-		node->right = insertRouteAVL(node->right, idRoute, distance); 
+		routes->right = insertRouteAVL(routes->right, idRoute, distance); 
 	}
         
     else {
@@ -40,107 +40,107 @@ AVL* insertRouteAVL(AVL* node, int idRoute, float distance)
 		route->min = min2f(distance, route->min);
 		route->sum += distance;
 		route->n++;
-		return node; 
+		return routes; 
 	}
 	
-    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+    routes->height = 1 + max2i(getHeight(routes->left), getHeight(routes->right)); 
   
-    int balance = getBalance(node); 
+    int balance = getBalance(routes); 
 
     // Left Left Case 
     if (balance > 1) {
-		Route* routeLeft = (Route*)node->left->element;
+		Route* routeLeft = (Route*)routes->left->element;
 		if (idRoute < routeLeft->id) {
-			return rotateRight(node);
+			return rotateRight(routes);
 		}
 	}
          
     // Right Right Case 
     if (balance < -1) {
-		Route* routeRight = (Route*)node->right->element;
+		Route* routeRight = (Route*)routes->right->element;
 		if (idRoute > routeRight->id) {
-			return rotateLeft(node); 
+			return rotateLeft(routes); 
 		}
 		
 	}
         
     // Left Right Case 
     if (balance > 1) { 
-		Route* routeLeft = (Route*)node->left->element;
+		Route* routeLeft = (Route*)routes->left->element;
 		if (idRoute > routeLeft->id){
-			return rotateDoubleRight(node);
+			return rotateDoubleRight(routes);
 		}
     } 
   
     // Right Left Case 
     if (balance < -1) { 
-		Route* routeRight = (Route*)node->right->element;
+		Route* routeRight = (Route*)routes->right->element;
 		if (idRoute < routeRight->id){
-			return rotateDoubleLeft(node);
+			return rotateDoubleLeft(routes);
 		}
     } 
   
-    return node; 
+    return routes; 
 } 
 
-AVL* insertRouteMinxMaxAVL(AVL* node, float minMax, Route* element)
+AVL* insertRouteMinMaxAVL(AVL* routesMinMaxSorted, float minMax, Route* element)
 {
-	if (node == NULL) {
+	if (routesMinMaxSorted == NULL) {
 		return(createAVL(element));
 	}
         
-	Route* route = (Route*)node->element;
+	Route* route = (Route*)routesMinMaxSorted->element;
   
     if (minMax < (route->max - route->min)) {
-		node->left  = insertRouteMinxMaxAVL(node->left, minMax, element); 
+		routesMinMaxSorted->left  = insertRouteMinMaxAVL(routesMinMaxSorted->left, minMax, element); 
 	}
         
     else if (minMax > (route->max - route->min)) {
-		node->right = insertRouteMinxMaxAVL(node->right, minMax, element); 
+		routesMinMaxSorted->right = insertRouteMinMaxAVL(routesMinMaxSorted->right, minMax, element); 
 	}
         
     else {
-		return node; 
+		return routesMinMaxSorted; 
 	}
 	
-    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+    routesMinMaxSorted->height = 1 + max2i(getHeight(routesMinMaxSorted->left), getHeight(routesMinMaxSorted->right)); 
   
-    int balance = getBalance(node); 
+    int balance = getBalance(routesMinMaxSorted); 
 
     // Left Left Case 
     if (balance > 1) {
-		Route* routeLeft = (Route*)node->left->element;
+		Route* routeLeft = (Route*)routesMinMaxSorted->left->element;
 		if (minMax < (routeLeft->max - routeLeft->min)) {
-			return rotateRight(node);
+			return rotateRight(routesMinMaxSorted);
 		}
 	}
          
     // Right Right Case 
     if (balance < -1) {
-		Route* routeRight = (Route*)node->right->element;
+		Route* routeRight = (Route*)routesMinMaxSorted->right->element;
 		if (minMax > (routeRight->max - routeRight->min)) {
-			return rotateLeft(node); 
+			return rotateLeft(routesMinMaxSorted); 
 		}
 		
 	}
         
     // Left Right Case 
     if (balance > 1) { 
-		Route* routeLeft = (Route*)node->left->element;
+		Route* routeLeft = (Route*)routesMinMaxSorted->left->element;
 		if (minMax > (routeLeft->max - routeLeft->min)){
-			return rotateDoubleRight(node);
+			return rotateDoubleRight(routesMinMaxSorted);
 		}
     } 
   
     // Right Left Case 
     if (balance < -1) { 
-		Route* routeRight = (Route*)node->right->element;
+		Route* routeRight = (Route*)routesMinMaxSorted->right->element;
 		if (minMax < (routeRight->max - routeRight->min)){
-			return rotateDoubleLeft(node);
+			return rotateDoubleLeft(routesMinMaxSorted);
 		}
     } 
   
-    return node; 
+    return routesMinMaxSorted; 
 }
 
 AVL* constructRoutesMinxMaxSortedAVL(AVL* routes, AVL* routesMinMaxSorted) 
@@ -150,7 +150,8 @@ AVL* constructRoutesMinxMaxSortedAVL(AVL* routes, AVL* routesMinMaxSorted)
 		routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes->left, routesMinMaxSorted); 
 		
 		Route* route = (Route*)routes->element;
-		routesMinMaxSorted = insertRouteMinxMaxAVL(routesMinMaxSorted, route->max - route->min, route);
+		// Insert a AVL node sorted by minMax
+		routesMinMaxSorted = insertRouteMinMaxAVL(routesMinMaxSorted, route->max - route->min, route);
         
 		routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes->right, routesMinMaxSorted); 
     }
@@ -181,6 +182,7 @@ void writeRouteDatas(AVL* routesMinMaxSorted, FILE* file, int* counter, int limi
 void sortRoutes(FILE* inputFile, FILE* outputFile) {
 	AVL* routes = NULL;
 
+	// Get file contents
 	int idRoute, idStep;
 	float distance;
 	char townA[NAME_SIZE], townB[NAME_SIZE], driverName[NAME_SIZE];
@@ -196,17 +198,17 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 		// Separating by ';' to get informations
 		lineArray = lineToArray(line);
 		if (sscanf(lineArray[0], "%d", &idRoute) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide1.\n");
+			printf("Conversion Error, string is not a valid number (Column 1)\n");
 			exit(1);
 		}
 		if (sscanf(lineArray[1], "%d", &idStep) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide2.\n");
+			printf("Conversion Error, string is not a valid number (Column 2)\n");
 			exit(1);
 		}
 		strcpy(townA, lineArray[2]);
 		strcpy(townB, lineArray[3]);
 		if (sscanf(lineArray[4], "%f", &distance) != 1) {
-			printf("Erreur de conversion. La chaîne n'est pas un nombre valide3.\n");
+			printf("Conversion Error, string is not a valid number (Column 4)\n");
 			exit(1);
 		}
 		strcpy(driverName, lineArray[5]);
@@ -215,10 +217,11 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 	}
 
 	fclose(inputFile);
+	//
 
-	printf("Sorting routes AVL from minmax... 2/3\n");
+	printf("Sorting routes AVL from minMax... 2/3\n");
 
-	// Construct a AVL from the minmax as keys (minmax = max - min)
+	// Construct a AVL from the minMax as keys (minMax = max - min)
 	AVL* routesMinMaxSorted = NULL;
 
 	routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes, routesMinMaxSorted);
