@@ -1,57 +1,56 @@
 #!/usr/bin/env bash
 
 help() {
-    echo "Ce code est pour filter et afficher des données triés d'une société de transport, en dépendant du type d'option que vous allez selectionner "
+    echo "This code is to filter and print out with histograms the data from a Transport document, depending on which type of filter selected "
 	echo
-	echo "Syntaxe : (bash) main.sh [argument]<option>"
-	echo "Arguments :"
+	echo "Syntax : (bash) main.sh [argument]<option>"
+	echo "This is the syntax will be using for this code"
 	echo
-	echo "--help: afficher ce texte " 
+	echo "--help: to print this message out  " 
 	echo "Exemple : bash main.sh --help"
 	echo
-	echo "-i  sélectionne le fichier data.csv(cette commandes est essencielle)"
-	echo "Exemple : bash main.sh -i data.csv"
+	echo "-i:  the argument needed to execute our project with the correct data document"
+ 	echo " do not forget the data/data.csv to be able to find the correct document"
+	echo "Example: bash main.sh -i data/data.csv"
 	echo
-	echo "-d<1|2> ceci créer un fichier avec la liste des conducteurs et le nombre de trajet différents qu'ils ont effectués"
-	echo "d1, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"                                                                                
-	echo "d2, c'est pour trier par ordre décroissant le nombre de trajet, ce sera les 10 premiers conducteurs"
-	echo "Exemple : bash main.sh -i data.csv -d2"
+	echo "-d<1|2> These 2 options are to print out a histogram with a list of drivers the top 10 drivers depending on these two factors: the number of trips or total distance"
+	echo "d1, this option is for the number of trips made per driver, they will be in order from the biggest amount to the smallest "                                                                                
+	echo "d2, this option takes the total distance per driver, they will be in order from the biggest amount to the smallest  "
+	echo "Exemple : bash main.sh -i data/data.csv -d2"
     echo
-	echo "-l: créer un fichier avec les 10 plus grandes distances parcours par les conducteurs, ordonnez par numéro d'identifiant de trajet croissant"
+	echo "-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
 	echo "Exemple : bash main.sh -i data/data.csv -l"
     echo
-	echo "-t: créer un fichier qui aura les 10 villes les plus parcours en ordre alphabétique"
+	echo "-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
 	echo "Exemple : bash main.sh -i data/data.csv -t"
     echo
-	echo "-s: on récupère les distances minimales, maximales et moyennes"
+	echo "-s: this option takes the minimum, maximal and average distance per trip "
 	echo "Exemple : bash main.sh -i data/data.csv -s"
-    echo
-	echo "--avl: choisir le trie avec un avl, le plus rapide"
-	echo "Exemple : bash main.sh -i data/data.csv -s --avl"
+  
   	
 }
 
 #######################################
-# Check if a variable exist
+# Check if a variable exists
 # Arguments :
 #   The variable to check
 # Returns :
-#   0 if the variable exist, 0 if its doesn't
+#   0 if the variable exists, 0 if it doesn't
 #######################################
 isset() {
     if ! [ -z "$1" ]; then
-        return 0 # The variable exist
+        return 0 # The variable exists
     else
         return 1 # The variable doesn't exist
     fi
 }
 
 #######################################
-# Check if a folder exist from the root directory, if not, create it
+# Check if a folder exists from the root directory, if not, create it
 # Arguments :
-#   The name of folder to check
+#   The name of the folder to check
 # Returns :
-#   0 if the folder exist, 1 if its doesn't
+#   0 if the folder exists, 1 if it doesn't
 #######################################
 check_folder(){
     local folder_name="$1"
@@ -65,7 +64,7 @@ check_folder(){
 }
 
 #######################################
-# Check if the argument for a option is empty
+# Check if the argument for an option is empty
 # Arguments :
 #   The option
 #   The arguments to check
@@ -142,7 +141,7 @@ done
 
 # Check if the input has been set
 if ! isset "$input"; then
-    echo "Missing argument -i, see --help for informations"
+    echo "Missing argument -i, see --help for information"
     exit 1
 fi
 
@@ -152,16 +151,16 @@ if ! [ -f "$input" ]; then
     exit 1
 fi
 
-# Check if a option has been choosen
+# Check if an option has been chosen
 if ! "$option_defined";  then
-    echo "Option isn't defined !, see --help for informations"
+    echo "Option isn't defined !, see --help for information"
     exit 1
 fi
 
-# Check if C program exist
+# Check if the C program exists
 executable_path="progc/main"
 
-# If its doesn't, compile it with makefile
+# If it doesn't, compile it with makefile
 if ! [ -x "$executable_path" ]; then
     echo "The C executable '$executable_path' is either not present or not executable."
     echo "Compiling C program..."
@@ -179,7 +178,7 @@ check_folder images
 # Option -d1
 if isset "$d1"; then
     start=$(date +%s) # Records the start time
-    # if (!ids[$6,$1]++) : Associative array to check if the Route ID hasn't been get already. If no, then add to the count
+    # if (!ids[$6,$1]++) : Associative array to check if the Route ID hasn't been gotten already. If no, then add to the count
     # substr(driver, 1, length(driver)-1) = Remove the newline that is at the end of the name
     # sort -t';' -k2 -nr = Order by biggest number of routes first
     # head -n 10 = Keep the top 10 drivers
