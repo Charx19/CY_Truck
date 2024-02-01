@@ -37,3 +37,5 @@ This code is to filter and print out with histograms the data from a Transport d
     echo
  "-s: this option takes the minimum, maximal, and average distance per trip "
    "Exemple : bash main.sh -i data/data.csv -s"
+
+   
