@@ -1,5 +1,7 @@
 #!/usr/bin/gnuplot --persist
 
+# ARG1 = Input data file
+
 set datafile separator ";"
 set terminal pngcairo enhanced font 'arial,12' size 1200,1000
 
