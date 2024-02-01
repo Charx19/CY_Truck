@@ -58,6 +58,7 @@ check_folder(){
     if [ -d "$(dirname "$0")/$folder_name" ]; then
         return 0
     else
+        echo "Creating $folder_name folder..."
         mkdir -p "$folder_name" # Create the folder if its doesn't exist
         return 1
     fi
@@ -141,7 +142,7 @@ done
 
 # Check if the input has been set
 if ! isset "$input"; then
-    echo "Missing argument -i"
+    echo "Missing argument -i, see --help for informations"
     exit 1
 fi
 
@@ -153,20 +154,23 @@ fi
 
 # Check if a option has been choosen
 if ! "$option_defined";  then
-    echo "option isn't defined !"
+    echo "Option isn't defined !, see --help for informations"
     exit 1
 fi
 
 # Check if C program exist
 executable_path="progc/main"
 
+# If its doesn't, compile it with makefile
 if ! [ -x "$executable_path" ]; then
     echo "The C executable '$executable_path' is either not present or not executable."
+    echo "Compiling C program..."
     make -C "progc"
 fi
 
 # Check the existence of folders
 if check_folder temp; then
+    echo "Deleting temp contents..."
     rm -rf "$(dirname "$0")/temp"/* # Remove the contents of temp
 fi
 
