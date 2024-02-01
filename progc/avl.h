@@ -7,22 +7,17 @@
 // https://www.geeksforgeeks.org/insertion-in-an-avl-tree/
 
 typedef struct _AVL {
-    float key;
     void* element;
     struct _AVL *left;
     struct _AVL *right;
     int height;
 } AVL;
 
-AVL* createAVL(float key, void* element);
+AVL* createAVL(void* element);
 
 int getHeight(AVL* node);
 
 int getBalance(AVL* node);
-
-AVL* insertAVL(AVL* node, float key, void* element);
-
-AVL* searchKeyAVL(AVL* node, float key);
 
 AVL* rotateLeft(AVL* x);
 

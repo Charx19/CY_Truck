@@ -70,16 +70,6 @@ float min2f(float a, float b){
 	return (a < b) ? a : b;
 }
 
-int hash(char *str)
-{
-    int hash = 0;
-    for (int i = 0; str[i] != '\0'; i++)
-    {
-        hash = 31 * hash + str[i];
-    }
-    return hash;
-}
-
 FILE* fopenSafe(char* filePath, char* mode) {
 	FILE* file = fopen(filePath, mode);
 	if (file == NULL){

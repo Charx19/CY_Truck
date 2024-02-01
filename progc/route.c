@@ -19,6 +19,130 @@ Route* createRoute(int id, float distance) {
 	return newRoute;
 }
 
+AVL* insertRouteAVL(AVL* node, int idRoute, float distance) 
+{ 
+    if (node == NULL) {
+		return(createAVL(createRoute(idRoute, distance)));
+	}
+        
+	Route* route = (Route*)node->element;
+  
+    if (idRoute < route->id) {
+		node->left  = insertRouteAVL(node->left, idRoute, distance); 
+	}
+        
+    else if (idRoute > route->id) {
+		node->right = insertRouteAVL(node->right, idRoute, distance); 
+	}
+        
+    else {
+		route->max = max2f(distance, route->max);
+		route->min = min2f(distance, route->min);
+		route->sum += distance;
+		route->n++;
+		return node; 
+	}
+	
+    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+  
+    int balance = getBalance(node); 
+
+    // Left Left Case 
+    if (balance > 1) {
+		Route* routeLeft = (Route*)node->left->element;
+		if (idRoute < routeLeft->id) {
+			return rotateRight(node);
+		}
+	}
+         
+    // Right Right Case 
+    if (balance < -1) {
+		Route* routeRight = (Route*)node->right->element;
+		if (idRoute > routeRight->id) {
+			return rotateLeft(node); 
+		}
+		
+	}
+        
+    // Left Right Case 
+    if (balance > 1) { 
+		Route* routeLeft = (Route*)node->left->element;
+		if (idRoute > routeLeft->id){
+			return rotateDoubleRight(node);
+		}
+    } 
+  
+    // Right Left Case 
+    if (balance < -1) { 
+		Route* routeRight = (Route*)node->right->element;
+		if (idRoute < routeRight->id){
+			return rotateDoubleLeft(node);
+		}
+    } 
+  
+    return node; 
+} 
+
+AVL* insertRouteMinxMaxAVL(AVL* node, float minMax, Route* element)
+{
+	if (node == NULL) {
+		return(createAVL(element));
+	}
+        
+	Route* route = (Route*)node->element;
+  
+    if (minMax < (route->max - route->min)) {
+		node->left  = insertRouteMinxMaxAVL(node->left, minMax, element); 
+	}
+        
+    else if (minMax > (route->max - route->min)) {
+		node->right = insertRouteMinxMaxAVL(node->right, minMax, element); 
+	}
+        
+    else {
+		return node; 
+	}
+	
+    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+  
+    int balance = getBalance(node); 
+
+    // Left Left Case 
+    if (balance > 1) {
+		Route* routeLeft = (Route*)node->left->element;
+		if (minMax < (routeLeft->max - routeLeft->min)) {
+			return rotateRight(node);
+		}
+	}
+         
+    // Right Right Case 
+    if (balance < -1) {
+		Route* routeRight = (Route*)node->right->element;
+		if (minMax > (routeRight->max - routeRight->min)) {
+			return rotateLeft(node); 
+		}
+		
+	}
+        
+    // Left Right Case 
+    if (balance > 1) { 
+		Route* routeLeft = (Route*)node->left->element;
+		if (minMax > (routeLeft->max - routeLeft->min)){
+			return rotateDoubleRight(node);
+		}
+    } 
+  
+    // Right Left Case 
+    if (balance < -1) { 
+		Route* routeRight = (Route*)node->right->element;
+		if (minMax < (routeRight->max - routeRight->min)){
+			return rotateDoubleLeft(node);
+		}
+    } 
+  
+    return node; 
+}
+
 AVL* constructRoutesMinxMaxSortedAVL(AVL* routes, AVL* routesMinMaxSorted) 
 { 
     if(routes != NULL) 
@@ -26,11 +150,7 @@ AVL* constructRoutesMinxMaxSortedAVL(AVL* routes, AVL* routesMinMaxSorted)
 		routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes->left, routesMinMaxSorted); 
 		
 		Route* route = (Route*)routes->element;
-		AVL* element = NULL;
-		element = searchKeyAVL(routesMinMaxSorted, route->max - route->min);
-		if (element == NULL) {
-			routesMinMaxSorted = insertAVL(routesMinMaxSorted, route->max - route->min, route);
-		}
+		routesMinMaxSorted = insertRouteMinxMaxAVL(routesMinMaxSorted, route->max - route->min, route);
         
 		routesMinMaxSorted = constructRoutesMinxMaxSortedAVL(routes->right, routesMinMaxSorted); 
     }
@@ -91,21 +211,7 @@ void sortRoutes(FILE* inputFile, FILE* outputFile) {
 		}
 		strcpy(driverName, lineArray[5]);
 
-		// Construct a AVL with the route ID as a key
-		AVL* element = NULL;
-		// Search route if its exist in the AVL with the route ID
-		element = searchKeyAVL(routes, idRoute);
-		// If route doesn't exist in the AVL, insert it
-		if (element == NULL) {
-			routes = insertAVL(routes, idRoute, createRoute(idRoute, distance));
-		} else {
-			// Update value of route
-			Route* route = (Route*)element->element;
-			route->max = max2f(distance, route->max);
-			route->min = min2f(distance, route->min);
-			route->sum += distance;
-			route->n++;
-		}
+		routes = insertRouteAVL(routes, idRoute, distance); 
 	}
 
 	fclose(inputFile);

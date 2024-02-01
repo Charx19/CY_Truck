@@ -26,6 +26,10 @@ typedef struct {
 */ 
 Route* createRoute(int id, float distance);
 
+AVL* insertRouteAVL(AVL* node, int idRoute, float distance);
+
+AVL* insertRouteMinxMaxAVL(AVL* node, float minMax, Route* element);
+
 /*
 * Construct a AVL with minMax as key
 *

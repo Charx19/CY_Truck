@@ -54,16 +54,6 @@ float max2f(float a, float b);
 float min2f(float a, float b);
 
 /*
-* https://stackoverflow.com/questions/20462826/hash-function-for-strings-in-c
-* Transform a string into a hash
-*
-* str = The string we want to transform into a hash
-*
-* returns : A int hash
-*/
-int hash(char *str);
-
-/*
 * Open safely a file, if its fails, it send a error instead
 *
 * filePath : The path of the file we want to open
