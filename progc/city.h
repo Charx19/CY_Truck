@@ -9,7 +9,14 @@ typedef struct {
 	int totalRoutes; // The total routes count tied to that city
 	int firstTown; // drivers count
 	AVL* drivers; // AVL for the drivers so its doesn't count twice
+	AVL* idRoutes; // AVL for the drivers so its doesn't count twice
 } City;
+
+typedef struct {
+	int id;
+} IdRoute;
+
+IdRoute* constructIdRoute(int idRoute);
 
 /*
 * Construct a struct City
@@ -19,7 +26,13 @@ typedef struct {
 *
 * returns : A struct City
 */ 
-City* constructCity(char* townName, char* driverName);
+City* constructCity(char* townName, int idRoute);
+
+AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare);
+
+AVL* insertCityAVL(AVL* cities, char* townName, int idRoute, int isStart);
+
+AVL* insertCityTotalRoutesSortedAVL(AVL* node, int totalRoutes, City* element);
 
 /*
 * Sort a array of City by their name alphabetically

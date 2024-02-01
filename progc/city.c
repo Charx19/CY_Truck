@@ -6,16 +6,226 @@
 #include "avl.h"
 #include "utils.h"
 
-City* constructCity(char* townName, char* driverName) {
+IdRoute* constructIdRoute(int id) {
+	IdRoute* idRoute = (IdRoute*)malloc(sizeof(IdRoute));
+
+	idRoute->id = id;
+
+	return idRoute;
+}
+
+City* constructCity(char* townName, int idRoute) {
     City* newCity = (City*)malloc(sizeof(City));
 
 	strcpy(newCity->name, townName);
-	newCity->totalRoutes = 1;
-	newCity->firstTown = 1;
-	newCity->drivers = insertAVL(newCity->drivers, hash(driverName), NULL);
+	newCity->totalRoutes = 0;
+	newCity->firstTown = 0;
+	newCity->idRoutes = insertIdRouteAVL(newCity->idRoutes, newCity, &idRoute);
 
     return newCity;
 }
+
+AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare) 
+{ 
+    if (idRoutes == NULL) {
+		city->totalRoutes++;
+		return(createAVL(constructIdRoute(*(int*)idRouteToCompare)));
+	}
+        
+	IdRoute* idRoute = (IdRoute*)idRoutes->element;
+  
+    if (*(int*)idRouteToCompare < idRoute->id) {
+		idRoutes->left  = insertIdRouteAVL(idRoutes->left, city, idRouteToCompare); 
+	}
+        
+    else if (*(int*)idRouteToCompare > idRoute->id) {
+		idRoutes->right = insertIdRouteAVL(idRoutes->right, city, idRouteToCompare); 
+	}
+        
+    else {
+		return idRoutes; 
+	}
+	
+    idRoutes->height = 1 + max2i(getHeight(idRoutes->left), getHeight(idRoutes->right)); 
+  
+    int balance = getBalance(idRoutes); 
+
+    // Left Left Case 
+    if (balance > 1) {
+		IdRoute* idRouteLeft = (IdRoute*)idRoutes->left->element;
+		if (*(int*)idRouteToCompare < idRouteLeft->id) {
+			return rotateRight(idRoutes);
+		}
+	}
+         
+    // Right Right Case 
+    if (balance < -1) {
+		IdRoute* idRouteRight = (IdRoute*)idRoutes->right->element;
+		if (*(int*)idRouteToCompare > idRouteRight->id) {
+			return rotateLeft(idRoutes); 
+		}
+		
+	}
+        
+    // Left Right Case 
+    if (balance > 1) { 
+		IdRoute* idRouteLeft = (IdRoute*)idRoutes->left->element;
+		if (*(int*)idRouteToCompare > idRouteLeft->id){
+			return rotateDoubleRight(idRoutes);
+		}
+    } 
+  
+    // Right Left Case 
+    if (balance < -1) { 
+		IdRoute* idRouteRight = (IdRoute*)idRoutes->right->element;
+		if (*(int*)idRouteToCompare < idRouteRight->id){
+			return rotateDoubleLeft(idRoutes);
+		}
+    } 
+  
+    return idRoutes; 
+}
+
+AVL* insertCityAVL(AVL* node, char* townName, int idRoute, int isStart) 
+{ 
+    if (node == NULL) {
+		
+		return(createAVL(constructCity(townName, idRoute)));
+	}
+        
+	City* city = (City*)node->element;
+  
+    if (strcmp(townName, city->name) < 0) {
+		node->left  = insertCityAVL(node->left, townName, idRoute, isStart); 
+	}
+        
+    else if (strcmp(townName, city->name) > 0) {
+		node->right = insertCityAVL(node->right, townName, idRoute, isStart); 
+	}
+        
+    else {
+		city->idRoutes = insertIdRouteAVL(city->idRoutes, city, &idRoute);
+
+		if (isStart == 1){
+			city->firstTown++;
+		}
+		return node; 
+	}
+	
+    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+  
+    int balance = getBalance(node); 
+
+    // Left Left Case 
+    if (balance > 1) {
+		City* cityLeft = (City*)node->left->element;
+		if (strcmp(townName, cityLeft->name) < 0) {
+			return rotateRight(node);
+		}
+	}
+         
+    // Right Right Case 
+    if (balance < -1) {
+		City* cityRight = (City*)node->right->element;
+		if (strcmp(townName, cityRight->name) > 0) {
+			return rotateLeft(node); 
+		}
+		
+	}
+        
+    // Left Right Case 
+    if (balance > 1) { 
+		City* cityLeft = (City*)node->left->element;
+		if (strcmp(townName, cityLeft->name) > 0){
+			return rotateDoubleRight(node);
+		}
+    } 
+  
+    // Right Left Case 
+    if (balance < -1) { 
+		City* cityRight = (City*)node->right->element;
+		if (strcmp(townName, cityRight->name) < 0){
+			return rotateDoubleLeft(node);
+		}
+    } 
+  
+    return node; 
+} 
+
+AVL* insertCityTotalRoutesSortedAVL(AVL* node, int totalRoutes, City* element)
+{
+	if (node == NULL) {
+		return(createAVL(element));
+	}
+        
+	City* city = (City*)node->element;
+  
+    if (totalRoutes < city->totalRoutes) {
+		node->left  = insertCityTotalRoutesSortedAVL(node->left, totalRoutes, element); 
+	}
+        
+    else if (totalRoutes > city->totalRoutes) {
+		node->right = insertCityTotalRoutesSortedAVL(node->right, totalRoutes, element); 
+	}
+        
+    else {
+		return node; 
+	}
+	
+    node->height = 1 + max2i(getHeight(node->left), getHeight(node->right)); 
+  
+    int balance = getBalance(node); 
+
+    // Left Left Case 
+    if (balance > 1) {
+		City* cityLeft = (City*)node->left->element;
+		if (totalRoutes < cityLeft->totalRoutes) {
+			return rotateRight(node);
+		}
+	}
+         
+    // Right Right Case 
+    if (balance < -1) {
+		City* cityRight = (City*)node->right->element;
+		if (totalRoutes > cityRight->totalRoutes) {
+			return rotateLeft(node); 
+		}
+		
+	}
+        
+    // Left Right Case 
+    if (balance > 1) { 
+		City* cityLeft = (City*)node->left->element;
+		if (totalRoutes > cityLeft->totalRoutes){
+			return rotateDoubleRight(node);
+		}
+    } 
+  
+    // Right Left Case 
+    if (balance < -1) { 
+		City* cityRight = (City*)node->right->element;
+		if (totalRoutes < cityRight->totalRoutes){
+			return rotateDoubleLeft(node);
+		}
+    } 
+  
+    return node; 
+}
+
+AVL* constructCitiesTotalRoutesSorted(AVL* cities, AVL* citiesTotalRoutesSorted) 
+{ 
+    if(cities != NULL) 
+    { 
+		citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->left, citiesTotalRoutesSorted);
+
+		City* city = (City*)cities->element;
+		citiesTotalRoutesSorted = insertCityTotalRoutesSortedAVL(citiesTotalRoutesSorted, city->totalRoutes, city);
+
+        citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->right, citiesTotalRoutesSorted); 
+    } 
+	return citiesTotalRoutesSorted;
+} 
+
 
 void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
     int i, j;
@@ -33,23 +243,6 @@ void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
     }
 }
 
-AVL* constructCitiesTotalRoutesSorted(AVL* cities, AVL* citiesTotalRoutesSorted) 
-{ 
-    if(cities != NULL) 
-    { 
-		citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->left, citiesTotalRoutesSorted);
-
-		City* city = (City*)cities->element;
-		AVL* element = NULL;
-		element = searchKeyAVL(citiesTotalRoutesSorted, city->totalRoutes);
-		if (element == NULL) {
-			citiesTotalRoutesSorted = insertAVL(citiesTotalRoutesSorted, city->totalRoutes, city);
-		}
-
-        citiesTotalRoutesSorted = constructCitiesTotalRoutesSorted(cities->right, citiesTotalRoutesSorted); 
-    } 
-	return citiesTotalRoutesSorted;
-} 
 
 void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically[], int* counter) 
 { 
@@ -68,6 +261,20 @@ void getTopCities(AVL* citiesTotalRoutesSorted, City* citiesSortedAlphabetically
 		if (*counter == 0) {
 			return;
 		}
+    } 
+} 
+
+
+void test(FILE* outputFile, AVL* citiesTotalRoutesSorted) 
+{ 
+    if(citiesTotalRoutesSorted != NULL) 
+    { 
+		test(outputFile, citiesTotalRoutesSorted->left); 
+		
+		City* city = (City*)citiesTotalRoutesSorted->element;
+		fprintf(outputFile, "%s;%d;%d\n", city->name, city->totalRoutes, city->firstTown);
+		
+		test(outputFile, citiesTotalRoutesSorted->right); 
     } 
 } 
 
@@ -103,32 +310,13 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 		}
 		strcpy(driverName, lineArray[5]);
 
-		AVL* element = searchKeyAVL(cities, hash(townA));
-        if (element == NULL){
-            cities = insertAVL(cities, hash(townA), constructCity(townA, driverName));
-        }
-        else {
-            City* city = (City*)element->element;
-            city->totalRoutes++;
-			AVL* driver = searchKeyAVL(city->drivers, hash(driverName));
-			if (driver == NULL){
-				city->drivers = insertAVL(city->drivers, hash(driverName), NULL);
-				city->firstTown++;
-			}
-        }
-        
-        element = searchKeyAVL(cities, hash(townB));
-        if (element == NULL){
-            cities = insertAVL(cities, hash(townB), constructCity(townB, driverName));
-        } else {
-            City* city = (City*)element->element;
-            city->totalRoutes++;
-			AVL* driver = searchKeyAVL(city->drivers, hash(driverName));
-			if (driver == NULL){
-				city->drivers = insertAVL(city->drivers, hash(driverName), NULL);
-				city->firstTown++;
-			}
-        }
+		if(idStep == 1) {
+			cities = insertCityAVL(cities, townA, idRoute, 1);
+		}
+		else {
+			cities = insertCityAVL(cities, townA, idRoute, 0);
+		}
+		cities = insertCityAVL(cities, townB, idRoute, 0);
 	}
 
 	fclose(inputFile);
