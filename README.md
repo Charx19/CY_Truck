@@ -8,35 +8,36 @@ We made 5 different types of options :
   - T: The top 10 most traveled cities 
   - S: The minimal, maximal, et average distance per trip 
 
-Each of these options will send back a histogram (d1,d2, L, and T ) and S will send a graph 
+Each of these options will send back a histogram (d1,d2, L, and T ) and S will send a graph
 
-To know exactly how to execute and make our project work :here is the "help"
+# Help
 
-This code is to filter and print out with histograms the data from a Transport document, depending on which type of filter selected "
-	
- "Syntax : (bash) main.sh [argument]<option>"
-	 "This is the syntax will be using for this code"
+To know exactly how to execute and make our project work : here is the "help"
 
- "--help: to print this message out  " 
-   "Exemple : bash main.sh --help"
+```
+"Syntax : (bash) main.sh [argument]<option>"
+"This is the syntax will be using for this code"
 
- "-i:  the argument needed to execute our project with the correct data document"
- " do not forget the data/data.csv to be able to find the correct document"
- "Example: bash main.sh -i data/data.csv"
+"--help: to print this message out  " 
+"Exemple : bash main.sh --help"
 
- "-d<1|2> These 2 options are to print out a histogram with a list of drivers the top 10 drivers depending on these two factors: the number of trips or total distance"
- "d1, this option is for the number of trips made per driver, they will be in order from the biggest amount to the smallest "                                                                                
- "d2, this option takes the total distance per driver, they will be in order from the biggest amount to the smallest  "
-	  "Exemple : bash main.sh -i data/data.csv -d2"
+"-i:  the argument needed to execute our project with the correct data document"
+" do not forget the data/data.csv to be able to find the correct document"
+"Example: bash main.sh -i data/data.csv"
 
- "-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
-   "Exemple : bash main.sh -i data/data.csv -l"
+"-d<1|2> These 2 options are to print out a histogram with a list of drivers the top 10 drivers depending on these two factors: the number of trips or total distance"
+"d1, this option is for the number of trips made per driver, they will be in order from the biggest amount to the smallest "                                                                                
+"d2, this option takes the total distance per driver, they will be in order from the biggest amount to the smallest  "
+"Exemple : bash main.sh -i data/data.csv -d2"
 
-   For the next two options, you will need to use the makefile: "make -c progc" before executing them
- "-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
-	 "Exemple : bash main.sh -i data/data.csv -t"
-    echo
- "-s: this option takes the minimum, maximal, and average distance per trip "
-   "Exemple : bash main.sh -i data/data.csv -s"
+"-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
+"Exemple : bash main.sh -i data/data.csv -l"
 
+For the next two options, you will need to use the makefile: "make -C progc" before executing them
+"-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
+"Exemple : bash main.sh -i data/data.csv -t"
+
+"-s: this option takes the minimum, maximal, and average distance per trip "
+"Exemple : bash main.sh -i data/data.csv -s"
+```
    
