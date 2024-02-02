@@ -1,32 +1,32 @@
 #!/usr/bin/env bash
 
 help() {
-    echo "This code is to filter and print out with histograms the data from a Transport document, depending on which type of filter selected "
+    echo "This code is to filter and print out with histograms the data from a Transport document, depending on which type of filter selected"
 	echo
-	echo "Syntax : (bash) main.sh [argument]<option>"
+	echo "Syntax : (bash) main.sh [argument] <option>"
 	echo "This is the syntax will be using for this code"
 	echo
-	echo "--help: to print this message out  " 
-	echo "Exemple : bash main.sh --help"
+	echo "--help: to print this message out" 
+	echo "Example : bash main.sh --help"
 	echo
-	echo "-i:  the argument needed to execute our project with the correct data document"
- 	echo " do not forget the data/data.csv to be able to find the correct document"
+	echo "-i: The argument needed to execute our project with the correct data document"
+ 	echo "Do not forget the data/data.csv to be able to find the correct document"
 	echo "Example: bash main.sh -i data/data.csv"
 	echo
 	echo "-d<1|2> These 2 options are to print out a histogram with a list of drivers the top 10 drivers depending on these two factors: the number of trips or total distance"
-	echo "d1, this option is for the number of trips made per driver, they will be in order from the biggest amount to the smallest "                                                                                
-	echo "d2, this option takes the total distance per driver, they will be in order from the biggest amount to the smallest  "
-	echo "Exemple : bash main.sh -i data/data.csv -d2"
+	echo "d1, This option is for the number of trips made per driver, they will be in order from the biggest amount to the smallest"                                                                                
+	echo "d2, This option takes the total distance per driver, they will be in order from the biggest amount to the smallest"
+	echo "Example : bash main.sh -i data/data.csv -d2"
     echo
-	echo "-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
-	echo "Exemple : bash main.sh -i data/data.csv -l"
+	echo "-l: This option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
+	echo "Example : bash main.sh -i data/data.csv -l"
     echo
-    	echo "For these options to be executed, you will need to use the makefile :(make -c progc) beforehand"
-	echo "-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
-	echo "Exemple : bash main.sh -i data/data.csv -t"
+    echo "For these options to be executed, you will need to use the makefile :(make -c progc) beforehand"
+	echo "-t: This option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
+	echo "Example : bash main.sh -i data/data.csv -t"
     echo
-	echo "-s: this option takes the minimum, maximal and average distance per trip "
-	echo "Exemple : bash main.sh -i data/data.csv -s"
+	echo "-s: This option takes the minimum, maximal and average distance per trip"
+	echo "Example : bash main.sh -i data/data.csv -s"
   
   	
 }

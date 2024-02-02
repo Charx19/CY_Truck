@@ -44,8 +44,8 @@ void bubbleSort(City* citiesSortedAlphabetically[], int arraySize) {
 AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare) 
 { 
     if (idRoutes == NULL) {
-		city->totalRoutes++;
-		return(createAVL(constructIdRoute(*(int*)idRouteToCompare)));
+		city->totalRoutes++; // If the route ID wasn't been checked before, add it to the total routes count
+		return(createAVL(constructIdRoute(*(int*)idRouteToCompare))); // Add the route ID to the City, to check it later if its in the list
 	}
         
 	IdRoute* idRoute = (IdRoute*)idRoutes->element;
@@ -105,7 +105,6 @@ AVL* insertIdRouteAVL(AVL* idRoutes, City* city, void* idRouteToCompare)
 AVL* insertCityAVL(AVL* cities, char* townName, int idRoute, int isStart) 
 { 
     if (cities == NULL) {
-		
 		return(createAVL(constructCity(townName, idRoute)));
 	}
         

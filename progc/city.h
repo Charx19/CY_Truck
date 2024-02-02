@@ -8,7 +8,7 @@ typedef struct {
 	char name[NAME_SIZE]; // Name of the city
 	int totalRoutes; // The total routes count tied to that city
 	int firstTown; // first town count
-	AVL* idRoutes; // AVL for the routes ID so its doesn't count twice
+	AVL* idRoutes; // AVL to check if a route ID is here or not
 } City;
 
 typedef struct {
