@@ -338,6 +338,13 @@ void sortCities(FILE* inputFile, FILE* outputFile) {
 
 	fclose(outputFile);
 
+	// Free memory from citiesSortedAlphabetically array
+	for (int i = 0; i < 10; i++){
+		if (citiesSortedAlphabetically[i] != NULL){
+			free(citiesSortedAlphabetically[i]);
+		}
+	}
+
 	// Free memory from AVL trees
 	destroyAVL(cities);
 	destroyAVL(citiesRoutesSorted);
