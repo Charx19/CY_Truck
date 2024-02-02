@@ -33,7 +33,7 @@ Each of these options will send back a histogram.
 "-l: This option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
 "Exemple : bash main.sh -i data/data.csv -l"
 ```
-**For the next two options, you will need to use the makefile: ```make -C progc``` before executing them**
+**For the next two options, you will need to use the makefile by entering : ```make -C progc``` in the terminal before executing them**
 ```
 "-t: This option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
 "Exemple : bash main.sh -i data/data.csv -t"
