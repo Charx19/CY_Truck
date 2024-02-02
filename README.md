@@ -8,7 +8,7 @@ We made 5 different types of options :
   - T: The top 10 most traveled cities 
   - S: The minimal, maximal, and average distance per trip 
 
-Each of these options will send back a histogram (d1,d2, L, and T ) and S will send a graph
+Each of these options will send back a histogram.
 
 # Help
 
