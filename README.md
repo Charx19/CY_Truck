@@ -31,7 +31,8 @@ This code is to filter and print out with histograms the data from a Transport d
 
  "-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
    "Exemple : bash main.sh -i data/data.csv -l"
-    echo
+
+   For the next two options, you will need to use the makefile: "make -c progc" before executing them
  "-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
 	 "Exemple : bash main.sh -i data/data.csv -t"
     echo
