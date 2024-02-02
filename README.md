@@ -6,7 +6,7 @@ We made 5 different types of options :
   - d<1/2>: to filter by the number of trips made per the top 10 drivers or the total distance per the top 10 drivers
   - L: The total distance per driver ID
   - T: The top 10 most traveled cities 
-  - S: The minimal, maximal, et average distance per trip 
+  - S: The minimal, maximal, and average distance per trip 
 
 Each of these options will send back a histogram (d1,d2, L, and T ) and S will send a graph
 
