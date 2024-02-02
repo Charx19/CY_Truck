@@ -13,7 +13,7 @@ Each of these options will send back a histogram (d1,d2, L, and T ) and S will s
 # Help
 
 ```
-"Syntax : (bash) main.sh [argument]<option>"
+"Syntax : (bash) main.sh [argument] <option>"
 "This is the syntax will be using for this code"
 
 "--help: to print this message out  " 
