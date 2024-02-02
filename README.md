@@ -10,6 +10,8 @@ We made 5 different types of options :
 
 Each of these options will send back a histogram.
 
+**PS : Since the data.csv is too big, you will need to put it manually in the data folder**
+
 # Help
 
 ```
