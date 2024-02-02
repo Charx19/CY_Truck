@@ -21,6 +21,7 @@ help() {
 	echo "-l: this option takes the total distance of each driver, and prints them out from smallest to biggest. The values are linked to the driver's ID number"
 	echo "Exemple : bash main.sh -i data/data.csv -l"
     echo
+    	echo "For these options to be executed, you will need to use the makefile :(make -c progc) beforehand"
 	echo "-t: this option takes the most traveled cities and prints them in alphabetical order, the top 10 cities will appear on the histogram"
 	echo "Exemple : bash main.sh -i data/data.csv -t"
     echo
